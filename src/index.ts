@@ -53,7 +53,7 @@ app.post('/webhook/overseerr', async (c) => {
     const payload = parseResult.data
 
     const isNew = await isNewUser(payload.request!.requestedBy_email)
-    console.log(`Is new user: ${isNew}`)
+    console.log(`Is new user: ${isNew}`, payload.request!.requestedBy_email)
     if(isNew) {
       await addContact(payload.request!.requestedBy_email)
     }
