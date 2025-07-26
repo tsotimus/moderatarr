@@ -10,9 +10,6 @@ export const onStartup = async () => {
         const radarrInstances = await getRadarrInstances()
         const sonarrInstances = await getSonarrInstances()
 
-        console.log(radarrInstances)
-        console.log(sonarrInstances)
-
          //Loop through radarr instances and get the profiles
         for(const radarrInstance of radarrInstances) {
             try{
@@ -21,7 +18,7 @@ export const onStartup = async () => {
                     storeAnimeProfile(radarrProfiles, radarrInstance.id, "radarr")
                 }
             } catch(error) {
-                console.log(`Error getting radarr details from Radarr instance ${radarrInstance.id}`)
+                console.log(`Error storing and getting radarr details from Radarr instance ${radarrInstance.id}`)
             }
         }
 
@@ -32,7 +29,7 @@ export const onStartup = async () => {
                     storeAnimeProfile(sonarrDetails.profiles, sonarrInstance.id, "sonarr")
                 }
             } catch(error) {
-                console.log(`Error getting sonarr details from Sonarr instance ${sonarrInstance.id}`)
+                console.log(`Error storing and getting sonarr details from Sonarr instance ${sonarrInstance.id}`)
             }
         }
 
