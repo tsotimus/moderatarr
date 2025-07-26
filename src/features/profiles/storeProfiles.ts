@@ -9,7 +9,7 @@ export const storeAnimeProfile = (profiles: OverseerrProfile[], serverId: number
 
     if(animeProfiles) {
         db.insert(profilesTable).values({
-            id: animeProfiles.id,
+            profileId: animeProfiles.id,
             name: animeProfiles.name,
             serverId: serverId,
             serverType: serverType
