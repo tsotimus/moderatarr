@@ -17,6 +17,7 @@ export const onStartup = async () => {
         for(const radarrInstance of radarrInstances) {
             try{
                 const radarrProfiles = await getRadarrProfiles(radarrInstance.id)
+                console.log(radarrProfiles)
                 if(radarrProfiles) {
                     storeAnimeProfile(radarrProfiles, radarrInstance.id, "radarr")
                 }
