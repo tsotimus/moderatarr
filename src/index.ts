@@ -87,8 +87,10 @@ app.post('/webhook/overseerr', async (c) => {
 
           if(mediaType === "movie" && isAnime) {
             const currentRequest = await getRequest(requestId)
+            const currentServerId = currentRequest.serverId
 
-          
+            
+            
 
           }
             

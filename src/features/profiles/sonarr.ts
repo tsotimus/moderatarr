@@ -1,5 +1,5 @@
 import { overseerrApi } from "@/lib/overseerr"
-import { Profile } from "./types"
+import { OverseerrProfile    } from "./types"
 
 export interface SonarrInstance {
     id: number
@@ -31,7 +31,7 @@ export const getSonarrInstances = async (): Promise<SonarrInstance[]> => {
 }
 export interface SonarrDetails {
     server: SonarrInstance
-    profiles: Profile[]
+    profiles: OverseerrProfile[]
 }
 
 

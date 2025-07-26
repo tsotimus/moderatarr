@@ -7,3 +7,7 @@ export const profilesTable = sqliteTable("profiles", {
   serverId: int().notNull(),
   serverType: text().notNull(),
 });
+
+// Type exports
+export type Profile = typeof profilesTable.$inferSelect;
+export type NewProfile = typeof profilesTable.$inferInsert;

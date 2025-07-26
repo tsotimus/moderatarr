@@ -1,5 +1,5 @@
 import { overseerrApi } from "@/lib/overseerr"
-import { Profile } from "./types"
+import { OverseerrProfile } from "./types"
 
 
 export interface RadarrInstance {
@@ -27,7 +27,7 @@ export const getRadarrInstances = async (): Promise<RadarrInstance[]> => {
 }
 
 
-export const getRadarrProfiles = async (radarrId: number): Promise<Profile[]> => {
+export const getRadarrProfiles = async (radarrId: number): Promise<OverseerrProfile[]> => {
     const response = await overseerrApi.get(`/service/radarr/${radarrId}`)
     return response.data
 }

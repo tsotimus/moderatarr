@@ -1,4 +1,4 @@
-export interface Profile {
+export interface OverseerrProfile {
     id: number
     name: string
 }
