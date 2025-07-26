@@ -1,4 +1,5 @@
 import { overseerrApi } from "@/lib/overseerr"
+import { Profile } from "./types"
 
 export interface SonarrInstance {
     id: number
@@ -28,13 +29,13 @@ export const getSonarrInstances = async (): Promise<SonarrInstance[]> => {
     const response = await overseerrApi.get("/settings/sonarr")
     return response.data
 }
-
-export interface SonarrProfile {
-    id: number
-    name: string
+export interface SonarrDetails {
+    server: SonarrInstance
+    profiles: Profile[]
 }
 
-export const getSonarrProfiles = async (sonarrId: number): Promise<SonarrProfile[]> => {
-    const response = await overseerrApi.get(`/settings/sonarr/${sonarrId}/profiles`)
+
+export const getSonarrDetails = async (sonarrId: number): Promise<SonarrDetails> => {
+    const response = await overseerrApi.get(`/settings/sonarr/${sonarrId}`)
     return response.data
 }

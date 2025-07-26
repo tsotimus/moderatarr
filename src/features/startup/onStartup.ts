@@ -1,6 +1,6 @@
 import { validateEnv } from "@/env"
 import { getRadarrInstances, getRadarrProfiles } from "@/features/profiles/radarr"
-import { getSonarrInstances, getSonarrProfiles } from "@/features/profiles/sonarr"
+import { getSonarrDetails, getSonarrInstances } from "@/features/profiles/sonarr"
 import { findAnimeProfile } from "../profiles/findAnimeProfile"
 
 export const onStartup = async () => {
@@ -21,13 +21,14 @@ export const onStartup = async () => {
 
     //Loop through sonarr instances and get the profiles
     for(const sonarrInstance of sonarrInstances) {
-        const sonarrProfiles = await getSonarrProfiles(sonarrInstance.id)
-        const animeProfile = findAnimeProfile(sonarrProfiles)
+        const sonarrDetails = await getSonarrDetails(sonarrInstance.id)
+        console.log(sonarrDetails)
+        const animeProfile = findAnimeProfile(sonarrDetails.profiles)
         console.log(animeProfile)
     }
 
 
-    
+
 
     //Store these profiles into SQLite DB
 
