@@ -6,6 +6,8 @@
   "dependencies": {
     "axios": "^1.11.0",
     "better-sqlite3": "^12.2.0",
+    "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.3",
     "hono": "^4.8.9",
     "resend": "^4.7.0",
     "ts-pattern": "^5.8.0",
@@ -13,6 +15,7 @@
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "tsx": "^4.20.3"
   }
 }

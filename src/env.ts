@@ -7,6 +7,7 @@ const envSchema = z.object({
   TMDB_API_TOKEN: z.string().min(1),
   OVERSEERR_API_TOKEN: z.string().min(1),
   OVERSEERR_BASE_URL: z.string().min(1),
+  DB_FILE_NAME: z.string().min(1),
 });
 
 // Validate and export
