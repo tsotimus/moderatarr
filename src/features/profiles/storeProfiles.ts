@@ -8,11 +8,15 @@ export const storeAnimeProfile = (profiles: OverseerrProfile[], serverId: number
     const animeProfiles = findAnimeProfile(profiles)
 
     if(animeProfiles) {
-        db.insert(profilesTable).values({
-            profileId: animeProfiles.id,
-            name: animeProfiles.name,
-            serverId: serverId,
-            serverType: serverType
-        })
+        try{
+            db.insert(profilesTable).values({
+                profileId: animeProfiles.id,
+                name: animeProfiles.name,
+                serverId: serverId,
+                serverType: serverType
+            })
+        } catch(error) {
+            console.error(`Error storing anime profile for server ${serverId} and server type ${serverType}`, error)
+        }
     }
 }
