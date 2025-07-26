@@ -10,6 +10,9 @@ export const onStartup = async () => {
         const radarrInstances = await getRadarrInstances()
         const sonarrInstances = await getSonarrInstances()
 
+        console.log(radarrInstances)
+        console.log(sonarrInstances)
+
          //Loop through radarr instances and get the profiles
         for(const radarrInstance of radarrInstances) {
             try{
