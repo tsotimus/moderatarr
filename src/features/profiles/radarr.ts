@@ -22,12 +22,12 @@ export interface RadarrInstance {
 }
 
 export const getRadarrInstances = async (): Promise<RadarrInstance[]> => {
-    const response = await overseerrApi.get("/settings/radarr")
+    const response = await overseerrApi.get("/service/radarr")
     return response.data
 }
 
 
 export const getRadarrProfiles = async (radarrId: number): Promise<Profile[]> => {
-    const response = await overseerrApi.get(`/settings/radarr/${radarrId}/profiles`)
+    const response = await overseerrApi.get(`/service/radarr/${radarrId}`)
     return response.data
 }

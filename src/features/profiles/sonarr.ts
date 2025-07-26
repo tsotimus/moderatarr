@@ -26,7 +26,7 @@ export interface SonarrInstance {
 }
 
 export const getSonarrInstances = async (): Promise<SonarrInstance[]> => {
-    const response = await overseerrApi.get("/settings/sonarr")
+    const response = await overseerrApi.get("/service/sonarr")
     return response.data
 }
 export interface SonarrDetails {
@@ -36,6 +36,6 @@ export interface SonarrDetails {
 
 
 export const getSonarrDetails = async (sonarrId: number): Promise<SonarrDetails> => {
-    const response = await overseerrApi.get(`/settings/sonarr/${sonarrId}`)
+    const response = await overseerrApi.get(`/service/sonarr/${sonarrId}`)
     return response.data
 }
