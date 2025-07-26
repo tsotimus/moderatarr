@@ -1,7 +1,7 @@
 import { validateEnv } from "@/env"
 import { getRadarrInstances, getRadarrProfiles } from "@/features/profiles/radarr"
 import { getSonarrDetails, getSonarrInstances } from "@/features/profiles/sonarr"
-import { findAnimeProfile } from "../profiles/findAnimeProfile"
+import { storeAnimeProfile } from "../profiles/storeProfiles"
 
 export const onStartup = async () => {
     validateEnv()
@@ -17,8 +17,9 @@ export const onStartup = async () => {
         for(const radarrInstance of radarrInstances) {
             try{
                 const radarrProfiles = await getRadarrProfiles(radarrInstance.id)
-                const animeProfile = findAnimeProfile(radarrProfiles)
-                console.log(animeProfile)
+                if(radarrProfiles) {
+                    storeAnimeProfile(radarrProfiles, radarrInstance.id, "radarr")
+                }
             } catch(error) {
                 console.log(`Error getting radarr details from Radarr instance ${radarrInstance.id}`)
             }
@@ -27,8 +28,9 @@ export const onStartup = async () => {
         for(const sonarrInstance of sonarrInstances) {
             try{
                 const sonarrDetails = await getSonarrDetails(sonarrInstance.id)
-                const animeProfile = findAnimeProfile(sonarrDetails.profiles)
-                console.log(animeProfile)
+                if(sonarrDetails.profiles) {
+                    storeAnimeProfile(sonarrDetails.profiles, sonarrInstance.id, "sonarr")
+                }
             } catch(error) {
                 console.log(`Error getting sonarr details from Sonarr instance ${sonarrInstance.id}`)
             }

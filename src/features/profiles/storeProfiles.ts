@@ -3,7 +3,7 @@ import { Profile } from "./types"
 import { findAnimeProfile } from "./findAnimeProfile"
 import { profilesTable } from "@/lib/db/schema/profiles"
 
-export const storeProfiles = (profiles: Profile[], serverId: number, serverType: string) => {
+export const storeAnimeProfile = (profiles: Profile[], serverId: number, serverType: string) => {
 
     const animeProfiles = findAnimeProfile(profiles)
 
