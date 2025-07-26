@@ -10,6 +10,8 @@ import { OverseerrWebhookPayloadSchema } from '@/lib/overseerr'
 import { updateRequestStatus } from '@/features/requests/updateRequestStatus'
 import { getRequest } from './features/requests/getRequest'
 import { onStartup } from './features/startup/onStartup'
+import { getProfilesByServerId } from './features/profiles/getProfiles'
+import { putRequest } from './features/requests/putRequest'
 
 onStartup()
 
@@ -70,13 +72,10 @@ app.post('/webhook/overseerr', async (c) => {
           console.log('🔍 Complete webhook payload:', JSON.stringify(payload, null, 2))
 
           
-          // - Update Radarr if anime is detected
 
           const mediaType = getMediaType(payload.media!.media_type)
           
           const isAnime = await detectAnime(tmdbId, mediaType)
-
-          //If its an anime and a movie we update overseerr??
 
           const requestId = payload.request!.request_id
 
@@ -89,9 +88,22 @@ app.post('/webhook/overseerr', async (c) => {
             const currentRequest = await getRequest(requestId)
             const currentServerId = currentRequest.serverId
 
-            
-            
+            const profile = await getProfilesByServerId(currentServerId, "radarr")
 
+            if(profile){
+              await putRequest(requestId, {
+                mediaType: "movie",
+                serverId: currentServerId,
+                profileId: profile.id,
+                rootFolder: currentRequest.rootFolder,
+              })
+            } else {
+              console.log(`No profile found for server ${currentServerId} for a movie request`)
+            }
+          }
+
+          if(mediaType === "tv" && isAnime) {
+            //Implement 
           }
             
 

@@ -47,12 +47,12 @@ export interface UpdateRequestStatusResponse extends BaseRequest {}
 export interface PutRequestBody {
   mediaType: "movie" | "tv";
   seasons?: number[];
-  is4k: boolean;
-  serverId: number;
-  profileId: number;
-  rootFolder: string;
-  languageProfileId: number;
-  userId: number;
+  is4k?: boolean;
+  serverId?: number;
+  profileId?: number;
+  rootFolder?: string;
+  languageProfileId?: number;
+  userId?: number;
 }
 
 export interface UpdateRequestStatusBody {
