@@ -4,69 +4,16 @@ import { match } from 'ts-pattern'
 import {detectAnime} from '@/features/anime/detectAnime'
 import { validateEnv } from '@/env'
 import { isNewUser } from '@/features/email/isNewUser'
-import { addContact } from './features/email/addContact'
-import { getMediaType } from './features/media/getMediaType'
+import { addContact } from '@/features/email/addContact'
+import { getMediaType } from '@/features/media/getMediaType'
+import { OverseerrWebhookPayloadSchema } from '@/lib/overseerr'
+import { updateRequestStatus } from '@/features/requests/updateRequestStatus'
+import { getRequest } from './features/requests/getRequest'
+import { onStartup } from './features/startup/onStartup'
 
-validateEnv()
+onStartup()
 
 const app = new Hono()
-
-
-
-const OverseerrWebhookPayloadSchema = z.object({
-  notification_type: z.enum([
-    "TEST_NOTIFICATION",
-    "MEDIA_REQUEST",
-    "MEDIA_AUTO_APPROVED",
-    "MEDIA_PENDING",
-    "MEDIA_APPROVED",
-    "MEDIA_DECLINED",
-    "MEDIA_AVAILABLE",
-    "MEDIA_PROCESSING_FAILED",
-    "ISSUE_REPORTED",
-    "ISSUE_COMMENT",
-    "ISSUE_RESOLVED",
-    "ISSUE_REOPENED"
-  ]),
-  event: z.string(),
-  subject: z.string(),
-  message: z.string(),
-  image: z.string().optional(),
-  email: z.string().optional(),
-  username: z.string().optional(),
-  avatar: z.string().optional(),
-  media: z.object({
-    media_type: z.enum(["movie", "tv"]),
-    tmdbId: z.union([z.number(), z.string().transform(Number)]),
-    tvdbId: z.union([z.number(), z.string().transform(Number)]).optional(),
-    status: z.string(),
-    status4k: z.string().optional(),
-  }).nullable().optional(),
-  request: z.object({
-    request_id: z.union([z.number(), z.string().transform(Number)]),
-    requestedBy_email: z.string(),
-    requestedBy_username: z.string(),
-    requestedBy_avatar: z.string(),
-  }).nullable().optional(),
-  issue: z.object({
-    issue_id: z.number(),
-    issue_type: z.string(),
-    issue_status: z.string(),
-    reportedBy_email: z.string(),
-    reportedBy_username: z.string(),
-    reportedBy_avatar: z.string(),
-  }).nullable().optional(),
-  comment: z.object({
-    comment_message: z.string(),
-    commentedBy_email: z.string(),
-    commentedBy_username: z.string(),
-    commentedBy_avatar: z.string(),
-  }).nullable().optional(),
-  extra: z.array(z.object({
-    name: z.string(),
-    value: z.string(),
-  })).optional(),
-})
 
 
 app.get('/', (c) => {
@@ -132,6 +79,22 @@ app.post('/webhook/overseerr', async (c) => {
           //If its an anime and a movie we update overseerr??
 
           const requestId = payload.request!.request_id
+
+
+          if(mediaType === "movie" && !isAnime) {
+            const updateRequest = await updateRequestStatus(requestId, "approved")
+          } 
+
+          if(mediaType === "movie" && isAnime) {
+            const currentRequest = await getRequest(requestId)
+
+          
+
+          }
+            
+
+
+          // const getRequest = await overseerrApi.get(`/request/${requestId}`)
           
 
           if(isAnime) {
