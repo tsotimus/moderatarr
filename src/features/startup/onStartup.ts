@@ -6,26 +6,36 @@ import { findAnimeProfile } from "../profiles/findAnimeProfile"
 export const onStartup = async () => {
     validateEnv()
 
-    const radarrInstances = await getRadarrInstances()
-    const sonarrInstances = await getSonarrInstances()
+    try{
+        const radarrInstances = await getRadarrInstances()
+        const sonarrInstances = await getSonarrInstances()
 
-    console.log(radarrInstances)
-    console.log(sonarrInstances)
+         //Loop through radarr instances and get the profiles
+        for(const radarrInstance of radarrInstances) {
+            try{
+                const radarrProfiles = await getRadarrProfiles(radarrInstance.id)
+                const animeProfile = findAnimeProfile(radarrProfiles)
+                console.log(animeProfile)
+            } catch(error) {
+                console.log(`Error getting radarr details from Radarr instance ${radarrInstance.id}`)
+            }
+        }
 
-    //Loop through radarr instances and get the profiles
-    for(const radarrInstance of radarrInstances) {
-        const radarrProfiles = await getRadarrProfiles(radarrInstance.id)
-        const animeProfile = findAnimeProfile(radarrProfiles)
-        console.log(animeProfile)
+        for(const sonarrInstance of sonarrInstances) {
+            try{
+                const sonarrDetails = await getSonarrDetails(sonarrInstance.id)
+                const animeProfile = findAnimeProfile(sonarrDetails.profiles)
+                console.log(animeProfile)
+            } catch(error) {
+                console.log(`Error getting sonarr details from Sonarr instance ${sonarrInstance.id}`)
+            }
+        }
+
+    } catch(error) {
+        console.error(error)
     }
 
-    //Loop through sonarr instances and get the profiles
-    for(const sonarrInstance of sonarrInstances) {
-        const sonarrDetails = await getSonarrDetails(sonarrInstance.id)
-        console.log(sonarrDetails)
-        const animeProfile = findAnimeProfile(sonarrDetails.profiles)
-        console.log(animeProfile)
-    }
+
 
 
 
