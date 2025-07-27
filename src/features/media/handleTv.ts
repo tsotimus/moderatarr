@@ -69,7 +69,7 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
                     currentServerId = server.serverId;
                 }
 
-            const server = await getServerByServerIdAndType(currentServerId, "radarr");
+            const server = await getServerByServerIdAndType(currentServerId, "sonarr");
             if (server) {
                 const profiles = getProfiles(server);
                 const animeProfile = findAnimeProfile(profiles);
