@@ -10,7 +10,7 @@ import { OverseerrWebhookPayloadSchema } from '@/lib/overseerr'
 import { updateRequestStatus } from '@/features/requests/updateRequestStatus'
 import { getRequest } from './features/requests/getRequest'
 import { onStartup } from './features/startup/onStartup'
-import { getProfilesByServerId } from './features/profiles/getProfiles'
+// import { getProfilesByServerId } from './features/profiles/getProfiles'
 import { putRequest } from './features/requests/putRequest'
 
 onStartup()
@@ -88,18 +88,18 @@ app.post('/webhook/overseerr', async (c) => {
             const currentRequest = await getRequest(requestId)
             const currentServerId = currentRequest.serverId
 
-            const profile = await getProfilesByServerId(currentServerId, "radarr")
+            // const profile = await getProfilesByServerId(currentServerId, "radarr")
 
-            if(profile){
-              await putRequest(requestId, {
-                mediaType: "movie",
-                serverId: currentServerId,
-                profileId: profile.id,
-                rootFolder: currentRequest.rootFolder,
-              })
-            } else {
-              console.log(`No profile found for server ${currentServerId} for a movie request`)
-            }
+            // if(profile){
+            //   await putRequest(requestId, {
+            //     mediaType: "movie",
+            //     serverId: currentServerId,
+            //     profileId: profile.id,
+            //     rootFolder: currentRequest.rootFolder,
+            //   })
+            // } else {
+            //   console.log(`No profile found for server ${currentServerId} for a movie request`)
+            // }
           }
 
           if(mediaType === "tv" && isAnime) {
