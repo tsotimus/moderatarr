@@ -10,7 +10,7 @@ export const awaitingApprovalAlert = async (requester: NonNullable<OverseerrWebh
   }
     await resend.emails.send({
         from: `"Caucasus Cloud" <${env.OVERSEERR_EMAIL}>`,
-        to: env.ADMIN_EMAIL,
+        to: requester.requestedBy_email,
         subject: `Awaiting approval - Your request has been made`,
         react: AwaitingApprovalEmail({
           requesterUsername: requester.requestedBy_username ?? "",
