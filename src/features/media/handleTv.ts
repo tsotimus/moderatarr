@@ -3,15 +3,19 @@ import { GetRequestResponse } from "../requests/types";
 import { env } from "@/env";
 import { getTvDetails } from "../details/getDetails";
 import { handleManualAlert } from "../email/handleManualAlert";
+import { updateRequestStatus } from "../requests/updateRequestStatus";
 
-const getHowManySeasons = (payload: OverseerrWebhookPayload): number | null => {
+const getHowManySeasons = (payload: OverseerrWebhookPayload): {requestedSeasons: string[], totalRequestedSeasons: number} | null => {
     const extras = payload.extra
     if(extras) {
         const requestedSeasons = extras.find(extra => extra.name === "Requested Seasons")
         if(requestedSeasons){
             try {
                 const requestedSeasonsArray = requestedSeasons.value.split(",")
-                return requestedSeasonsArray.length
+                return {
+                    requestedSeasons: requestedSeasonsArray,
+                    totalRequestedSeasons: requestedSeasonsArray.length
+                }
             } catch (error) {
                 console.error(`Error parsing requested seasons ${requestedSeasons.value}`, error)
                 return null
@@ -21,13 +25,14 @@ const getHowManySeasons = (payload: OverseerrWebhookPayload): number | null => {
     return null
 }
 
-const isLargeShow = async (tmdbId: number) => {
+const isLargeSeason = async (tmdbId: number, requestedSeasons: string[]) => {
+    const EPISODE_THRESHOLD = 30
+
     const tvDetails = await getTvDetails(tmdbId)
-    console.log(tvDetails)
-    // if(tvDetails.seasons.length > env.MAX_ANIME_SEASONS) {
-    //     return true
-    // }
-    return false
+    const requestedSeasonsData= tvDetails.seasons.filter(season => requestedSeasons.includes(season.season_number.toString()))
+    const totalEpisodes = requestedSeasonsData.reduce((acc, season) => acc + season.episode_count, 0)
+
+    return totalEpisodes > EPISODE_THRESHOLD
 }
 
 const handleManualReq = async(request: GetRequestResponse, payload: OverseerrWebhookPayload) => {
@@ -41,12 +46,14 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
     if(!requestedSeasons) {
         return handleManualReq(request, payload)
     }
-    if(requestedSeasons > env.MAX_ANIME_SEASONS) {
+    const {requestedSeasons: requestedSeasonsArray, totalRequestedSeasons} = requestedSeasons
+
+    if(totalRequestedSeasons > env.MAX_ANIME_SEASONS) {
         return handleManualReq(request, payload)
     } else {
-        //Check to see if the show is large (how many episodes in a season)
-        const isLarge = await isLargeShow(payload.media!.tmdbId)
+        const isLarge = await isLargeSeason(payload.media!.tmdbId, requestedSeasonsArray)
         if(isLarge) {
+            console.log("Large anime request")
             return handleManualReq(request, payload)
         } else {
             //Auto approve
@@ -57,9 +64,23 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
 
 export const handleTVNonAnime = async (request: GetRequestResponse, payload: OverseerrWebhookPayload) => {
     const requestedSeasons = getHowManySeasons(payload)
-    if(requestedSeasons && requestedSeasons > env.MAX_NON_ANIME_SEASONS) {
-        return false
+
+    if(!requestedSeasons){
+        return handleManualReq(request, payload)
+    }
+
+    const {requestedSeasons: requestedSeasonsArray, totalRequestedSeasons} = requestedSeasons
+
+    if(totalRequestedSeasons > env.MAX_NON_ANIME_SEASONS) {
+        return handleManualReq(request, payload)
     } else {
-        return true
+        const isLarge = await isLargeSeason(payload.media!.tmdbId, requestedSeasonsArray)
+        if(isLarge) {
+            console.log("Large non-anime request")
+            return handleManualReq(request, payload)
+        } else {
+            await updateRequestStatus(request.id, "approved")
+            return true
+        }
     }
 };

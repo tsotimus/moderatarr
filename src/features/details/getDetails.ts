@@ -60,7 +60,21 @@ export interface MovieDetails {
     vote_count: number
 }
 
-export interface TvDetails extends MovieDetails {}
+interface Season {
+    air_date: string
+    episode_count: number
+    id: number
+    name: string
+    overview: string
+    poster_path: string
+    season_number: number
+    vote_average: number
+}
+
+
+export interface TvDetails extends MovieDetails {
+    seasons: Season[]
+}
 
 export const getMovieDetails = async (tmdbId: number) => {
     const response = await axios.get<MovieDetails>(`https://api.themoviedb.org/3/movie/${tmdbId}`, {
