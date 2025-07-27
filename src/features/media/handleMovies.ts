@@ -22,6 +22,7 @@ export const handleMovieNonAnime = async (requestId: number) => {
 
 export const handleMovieAnime = async (requestId: number) => {
   const currentRequest = await getRequest(requestId);
+  console.log(currentRequest);
   const currentServerId = currentRequest.serverId;
 
   const server = await getServerByServerIdAndType(currentServerId, "radarr");
