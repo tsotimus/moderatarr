@@ -4,6 +4,11 @@ import { env } from "@/env";
 import { getTvDetails } from "../details/getDetails";
 import { handleManualAlert } from "../email/handleManualAlert";
 import { updateRequestStatus } from "../requests/updateRequestStatus";
+import { findServer } from "../serverData/findServer";
+import { getProfiles, getRootFolders, getServerByServerIdAndType } from "../serverData/getServer";
+import { findAnimeProfile } from "../profiles/findAnimeProfile";
+import { findAnimeFolder } from "../profiles/findAnimeFolder";
+import { putRequest } from "../requests/putRequest";
 
 const getHowManySeasons = (payload: OverseerrWebhookPayload): {requestedSeasons: string[], totalRequestedSeasons: number} | null => {
     const extras = payload.extra
@@ -56,8 +61,44 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
             console.log("Large anime request")
             return handleManualReq(request, payload)
         } else {
-            //Auto approve
-            return true
+
+            let currentServerId = request.serverId;
+
+                if(!currentServerId) {
+                    const server = await findServer({mediaType: "tv", is4k: request.is4k, isAnime: true});
+                    currentServerId = server.serverId;
+                }
+
+            const server = await getServerByServerIdAndType(currentServerId, "radarr");
+            if (server) {
+                const profiles = getProfiles(server);
+                const animeProfile = findAnimeProfile(profiles);
+                const rootFolders = getRootFolders(server);
+                const animeFolder = findAnimeFolder(rootFolders);
+                if (animeProfile && animeFolder) {  
+                  try {
+                    await putRequest(request.id, {
+                      mediaType: "tv",
+                      serverId: currentServerId,
+                      profileId: animeProfile.id,
+                      rootFolder: animeFolder.path,
+                    });
+                    await updateRequestStatus(request.id, "approve")
+                    return true
+                  } catch (error) {
+                    console.error(`Error handling tv anime request ${request.id}`, error);
+                    return handleManualReq(request, payload)
+                  }
+                } else {
+                  console.log(
+                    `No profile found or folder found for server ${currentServerId} for a tv request`
+                  );
+                  return handleManualReq(request, payload)
+                }
+              } else {
+                console.log(`No server found for request ${request.id}`);
+                return handleManualReq(request, payload)
+              }
         }
     }
 };
