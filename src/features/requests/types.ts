@@ -31,9 +31,9 @@ export interface BaseRequest {
   requestedBy: User;
   modifiedBy: User;
   is4k: boolean;
-  serverId: number;
-  profileId: number;
-  rootFolder: string;
+  serverId: number | null;
+  profileId: number | null;
+  rootFolder: string | null;
 }
 
 // Specific response types

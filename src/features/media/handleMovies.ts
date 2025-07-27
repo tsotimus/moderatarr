@@ -3,6 +3,7 @@ import { findAnimeProfile } from "../profiles/findAnimeProfile";
 import { getRequest } from "../requests/getRequest";
 import { putRequest } from "../requests/putRequest";
 import { updateRequestStatus } from "../requests/updateRequestStatus";
+import { findServer } from "../serverData/findServer";
 import {
   getProfiles,
   getRootFolders,
@@ -23,7 +24,12 @@ export const handleMovieNonAnime = async (requestId: number) => {
 export const handleMovieAnime = async (requestId: number) => {
   const currentRequest = await getRequest(requestId);
   console.log(currentRequest);
-  const currentServerId = currentRequest.serverId;
+  let currentServerId = currentRequest.serverId;
+
+  if(!currentServerId) {
+    const server = await findServer({mediaType: "movie", is4k: currentRequest.is4k, isAnime: true});
+    currentServerId = server.id;
+  }
 
   const server = await getServerByServerIdAndType(currentServerId, "radarr");
   if (server) {
