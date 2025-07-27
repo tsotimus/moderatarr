@@ -1,20 +1,11 @@
 import { Hono } from 'hono'
-import { z } from 'zod'
 import { match } from 'ts-pattern'
 import {detectAnime} from '@/features/anime/detectAnime'
-import { validateEnv } from '@/env'
 import { isNewUser } from '@/features/email/isNewUser'
 import { addContact } from '@/features/email/addContact'
 import { getMediaType } from '@/features/media/getMediaType'
 import { OverseerrWebhookPayloadSchema } from '@/lib/overseerr'
-import { updateRequestStatus } from '@/features/requests/updateRequestStatus'
-import { getRequest } from './features/requests/getRequest'
 import { onStartup } from './features/startup/onStartup'
-// import { getProfilesByServerId } from './features/profiles/getProfiles'
-import { putRequest } from './features/requests/putRequest'
-import { getProfiles, getRootFolders, getServerByServerIdAndType } from './features/serverData/getServer'
-import { findAnimeProfile } from './features/profiles/findAnimeProfile'
-import { findAnimeFolder } from './features/profiles/findAnimeFolder'
 import { handleMovieAnime, handleMovieNonAnime } from './features/media/handleMovies'
 
 onStartup()
@@ -57,7 +48,6 @@ app.post('/webhook/overseerr', async (c) => {
     const payload = parseResult.data
 
     const isNew = await isNewUser(payload.request!.requestedBy_email)
-    console.log(`Is new user: ${isNew}`, payload.request!.requestedBy_email)
     if(isNew) {
       await addContact(payload.request!.requestedBy_email)
     }
