@@ -22,7 +22,7 @@ import {
   }
   
   const LOGO_URL =
-    'https://raw.githubusercontent.com/sct/overseerr/develop/public/logo.png';
+    'https://github.com/sct/overseerr/blob/develop/public/android-chrome-512x512.png';
   
   export const OverseerrManualRequestEmail = ({
     requesterUsername,
