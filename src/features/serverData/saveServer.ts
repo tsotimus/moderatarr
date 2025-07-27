@@ -9,6 +9,7 @@ type ServerInput =
     | { type: "sonarr"; data: SonarrDetails }
 
 export const saveServer = async (serverInput: ServerInput) => {
+    console.log("Server id", serverInput.data.server.id)
     try {
         const serverData = match(serverInput)
             .with({ type: "radarr" }, ({ data }) => ({

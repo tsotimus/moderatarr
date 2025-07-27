@@ -46,18 +46,13 @@ export const findServer = async ({mediaType, is4k, isAnime}: FindServerProps) =>
             }
         }
 
-        // If no specific server found or not anime/4k request, return the first non-specialized server
-        // Prefer non-4k, non-anime servers for regular requests
-        if(!is4k && !isAnime) {
-            const regularServer = servers.find(server => 
-                !server.is4k && !server.name.toLowerCase().includes("anime")
-            );
-            if(regularServer) {
-                return regularServer;
-            }
+        // Look for the default server
+        const defaultServer = servers.find(server => server.isDefault);
+        if(defaultServer) {
+            return defaultServer;
         }
 
-        // Fallback to first server if no better match
+        // Fallback to first server if no default server found
         return servers[0];
     }
 

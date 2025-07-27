@@ -28,6 +28,7 @@ export const handleMovieAnime = async (requestId: number) => {
 
   if(!currentServerId) {
     const server = await findServer({mediaType: "movie", is4k: currentRequest.is4k, isAnime: true});
+    console.log("Found a suitable server", server);
     currentServerId = server.id;
   }
 
