@@ -34,6 +34,7 @@ const isLargeSeason = async (tmdbId: number, requestedSeasons: string[]) => {
     const EPISODE_THRESHOLD = 30
 
     const tvDetails = await getTvDetails(tmdbId)
+    console.log("tvDetails", tvDetails)
     const requestedSeasonsData= tvDetails.seasons.filter(season => requestedSeasons.includes(season.season_number.toString()))
     const totalEpisodes = requestedSeasonsData.reduce((acc, season) => acc + season.episode_count, 0)
 
@@ -58,7 +59,6 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
     } else {
         const isLarge = await isLargeSeason(payload.media!.tmdbId, requestedSeasonsArray)
         if(isLarge) {
-            console.log("Large anime request")
             return handleManualReq(request, payload)
         } else {
 
@@ -75,7 +75,6 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
                 const animeProfile = findAnimeProfile(profiles);
                 const rootFolders = getRootFolders(server);
                 const animeFolder = findAnimeFolder(rootFolders);
-                console.log(animeProfile, animeFolder, profiles, rootFolders)
                 if (animeProfile && animeFolder) {  
                   try {
                     await putRequest(request.id, {
@@ -119,7 +118,6 @@ export const handleTVNonAnime = async (request: GetRequestResponse, payload: Ove
     } else {
         const isLarge = await isLargeSeason(payload.media!.tmdbId, requestedSeasonsArray)
         if(isLarge) {
-            console.log("Large non-anime request")  
             return handleManualReq(request, payload)
         } else {
             await updateRequestStatus(request.id, "approve")
