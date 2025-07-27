@@ -13,7 +13,7 @@ import {
 
 export const handleMovieNonAnime = async (request: GetRequestResponse) => {
   try {
-    const updateRequest = await updateRequestStatus(request.id, "approved");
+    const updateRequest = await updateRequestStatus(request.id, "approve");
     return updateRequest;
   } catch (error) {
     console.error(`Error handling movie non-anime request ${request.id}`, error);
@@ -35,7 +35,7 @@ export const handleMovieAnime = async (request: GetRequestResponse) => {
     const animeProfile = findAnimeProfile(profiles);
     const rootFolders = getRootFolders(server);
     const animeFolder = findAnimeFolder(rootFolders);
-    if (animeProfile && animeFolder) {
+    if (animeProfile && animeFolder) {  
       try {
         await putRequest(request.id, {
           mediaType: "movie",

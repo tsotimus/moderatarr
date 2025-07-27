@@ -76,10 +76,10 @@ export const handleTVNonAnime = async (request: GetRequestResponse, payload: Ove
     } else {
         const isLarge = await isLargeSeason(payload.media!.tmdbId, requestedSeasonsArray)
         if(isLarge) {
-            console.log("Large non-anime request")
+            console.log("Large non-anime request")  
             return handleManualReq(request, payload)
         } else {
-            await updateRequestStatus(request.id, "approved")
+            await updateRequestStatus(request.id, "approve")
             return true
         }
     }
