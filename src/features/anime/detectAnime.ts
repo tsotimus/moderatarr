@@ -23,6 +23,7 @@ export const detectAnime = async (tmdbId: number, mediaType: "movie" | "tv") => 
 
         try{
             const tvKeywords = await getTvKeywords(tmdbId)
+            console.log(tvKeywords)
             const isAnime = tvKeywords.keywords.some(keyword => keyword.name === "anime")
             if(isAnime) {
                 return true
