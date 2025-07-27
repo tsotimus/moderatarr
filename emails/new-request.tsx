@@ -6,14 +6,13 @@ import {
     Heading,
     Hr,
     Html,
-    Img,
     Preview,
     Section,
     Text,
     Tailwind,
   } from '@react-email/components';
   
-  interface OverseerrManualRequestEmailProps {
+  interface NewRequestEmailProps {
     requesterUsername: string;
     requesterEmail?: string;
     mediaTitle: string;
@@ -22,13 +21,13 @@ import {
   }
   
   
-  export const OverseerrManualRequestEmail = ({
+  export const NewRequestEmail = ({
     requesterUsername,
     requesterEmail,
     mediaTitle,
     mediaType,
     overseerrUrl,
-  }: OverseerrManualRequestEmailProps) => (
+  }: NewRequestEmailProps) => (
     <Html>
       <Head />
       <Preview>Manual action required for a new Overseerr request.</Preview>
@@ -85,4 +84,4 @@ import {
     </Html>
   );
   
-  export default OverseerrManualRequestEmail;
+  export default NewRequestEmail;

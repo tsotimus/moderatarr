@@ -11,8 +11,9 @@ import {
   handleMovieNonAnime,
 } from "./features/media/handleMovies";
 import { getRequest } from "./features/requests/getRequest";
-import { handleManualAlert } from "./features/email/handleManualAlert";
+import { handleAdminAlert } from "./features/email/handleManualAlert";
 import { handleTVAnime, handleTVNonAnime } from "./features/media/handleTv";
+import { awaitingApprovalAlert } from "./features/email/awaitingApprovalAlert";
 
 onStartup();
 
@@ -90,7 +91,7 @@ app.post("/webhook/overseerr", async (c) => {
                   requestId: requestId,
                 });
               } else {
-                await handleManualAlert(request, payload.subject, "Movie");
+                await handleAdminAlert(payload.request!, payload.subject, "Movie");
                 return c.json({
                   status: "error",
                   message: "Movie non-anime request failed",
@@ -108,7 +109,7 @@ app.post("/webhook/overseerr", async (c) => {
                   requestId: requestId,
                 });
               } else {
-                await handleManualAlert(request, payload.subject, "Movie");
+                await handleAdminAlert(payload.request!, payload.subject, "Movie");
                 return c.json({
                   status: "error",
                   message: "Movie anime request failed",
@@ -119,14 +120,15 @@ app.post("/webhook/overseerr", async (c) => {
             .with({ mediaType: "tv", isAnime: false }, async () => {
               const request = await getRequest(requestId);
               const updateRequest = await handleTVNonAnime(request, payload);
-              if (updateRequest) {
+              if (updateRequest.success) {
                 return c.json({
                   status: "success",
                   message: "TV non-anime request processed",
                   requestId: requestId,
                 });
               } else {
-                await handleManualAlert(request, payload.subject, "TV Show");
+                await awaitingApprovalAlert(request, payload.subject, "TV Show", updateRequest.reason);
+                await handleAdminAlert(payload.request!, payload.subject, "TV Show");
                 return c.json({
                   status: "error",
                   message: "TV non-anime request failed", 
@@ -137,14 +139,15 @@ app.post("/webhook/overseerr", async (c) => {
             .with({ mediaType: "tv", isAnime: true }, async () => {
               const request = await getRequest(requestId);
               const updateRequest = await handleTVAnime(request, payload);
-              if (updateRequest) {
+              if (updateRequest.success) {
                 return c.json({
                   status: "success",
                   message: "TV anime request processed",
                   requestId: requestId,
                 });
               } else {
-                await handleManualAlert(request, payload.subject, "TV Show");
+                await awaitingApprovalAlert(request, payload.subject, "TV Show", updateRequest.reason);
+                await handleAdminAlert(payload.request!, payload.subject, "TV Show");
                 return c.json({
                   status: "error",
                   message: "TV anime request failed",
@@ -155,32 +158,6 @@ app.post("/webhook/overseerr", async (c) => {
             .exhaustive();
 
           return mediaProcessingResult;
-        }
-      )
-      .with(
-        {
-          notification_type: "MEDIA_AUTO_APPROVED",
-        },
-        async (payload) => {
-          const tmdbId = payload.media!.tmdbId;
-
-          // TODO: Implement anime detection logic
-          // - Query TMDb API for movie details
-          // - Check for anime criteria (Animation genre + Japanese production country, etc.)
-          // - Update Radarr if anime is detected
-
-          const isAnime = await detectAnime(tmdbId, payload.media!.media_type);
-          if (isAnime) {
-            console.log(`Media is anime`);
-          } else {
-            console.log(`Media is not anime`);
-          }
-
-          return c.json({
-            status: "success",
-            message: "Auto-approved media processed",
-            tmdbId: tmdbId,
-          });
         }
       )
       .with({ notification_type: "TEST_NOTIFICATION" }, async () => {

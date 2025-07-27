@@ -1,6 +1,5 @@
 import { findAnimeFolder } from "../profiles/findAnimeFolder";
 import { findAnimeProfile } from "../profiles/findAnimeProfile";
-import { getRequest } from "../requests/getRequest";
 import { putRequest } from "../requests/putRequest";
 import { GetRequestResponse } from "../requests/types";
 import { updateRequestStatus } from "../requests/updateRequestStatus";

@@ -2,13 +2,19 @@ import { OverseerrWebhookPayload } from "@/lib/overseerr";
 import { GetRequestResponse } from "../requests/types";
 import { env } from "@/env";
 import { getTvDetails } from "../details/getDetails";
-import { handleManualAlert } from "../email/handleManualAlert";
 import { updateRequestStatus } from "../requests/updateRequestStatus";
 import { findServer } from "../serverData/findServer";
 import { getProfiles, getRootFolders, getServerByServerIdAndType } from "../serverData/getServer";
 import { findAnimeProfile } from "../profiles/findAnimeProfile";
 import { findAnimeFolder } from "../profiles/findAnimeFolder";
 import { putRequest } from "../requests/putRequest";
+
+type ReturnType = {
+    success: true,
+} | {
+    success: false,
+    reason: "REQUESTED_LARGE_SEASON"| "TOO_MANY_SEASONS" | "NO_SERVER_FOUND" | "NO_PROFILE_FOUND" | "NO_FOLDER_FOUND" | "ERROR_UPDATING_REQUEST" | "NO_SEASONS_FOUND"
+}
 
 const getHowManySeasons = (payload: OverseerrWebhookPayload): {requestedSeasons: string[], totalRequestedSeasons: number} | null => {
     const extras = payload.extra
@@ -34,32 +40,37 @@ const isLargeSeason = async (tmdbId: number, requestedSeasons: string[]) => {
     const EPISODE_THRESHOLD = 30
 
     const tvDetails = await getTvDetails(tmdbId)
-    console.log("tvDetails", tvDetails)
     const requestedSeasonsData= tvDetails.seasons.filter(season => requestedSeasons.includes(season.season_number.toString()))
     const totalEpisodes = requestedSeasonsData.reduce((acc, season) => acc + season.episode_count, 0)
 
     return totalEpisodes > EPISODE_THRESHOLD
 }
 
-const handleManualReq = async(request: GetRequestResponse, payload: OverseerrWebhookPayload) => {
-    await handleManualAlert(request, payload.subject, "TV Show")
-    return false
-}
 
-export const handleTVAnime = async (request: GetRequestResponse, payload: OverseerrWebhookPayload) => {
+
+export const handleTVAnime = async (request: GetRequestResponse, payload: OverseerrWebhookPayload): Promise<ReturnType> => {
     const requestedSeasons = getHowManySeasons(payload)
 
     if(!requestedSeasons) {
-        return handleManualReq(request, payload)
+        return {
+            success: false,
+            reason: "NO_SEASONS_FOUND"
+        }
     }
     const {requestedSeasons: requestedSeasonsArray, totalRequestedSeasons} = requestedSeasons
 
     if(totalRequestedSeasons > env.MAX_ANIME_SEASONS) {
-        return handleManualReq(request, payload)
+        return {
+            success: false,
+            reason: "TOO_MANY_SEASONS"
+        }
     } else {
         const isLarge = await isLargeSeason(payload.media!.tmdbId, requestedSeasonsArray)
         if(isLarge) {
-            return handleManualReq(request, payload)
+            return {
+                success: false,
+                reason: "REQUESTED_LARGE_SEASON"
+            }
         } else {
 
             let currentServerId = request.serverId;
@@ -85,43 +96,65 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
                       seasons: requestedSeasonsArray.map(season => parseInt(season))
                     });
                     await updateRequestStatus(request.id, "approve")
-                    return true
+                    return {
+                        success: true
+                    }
                   } catch (error) {
                     console.error(`Error handling tv anime request ${request.id}`, error);
-                    return handleManualReq(request, payload)
+                    return {
+                        success: false,
+                        reason: "ERROR_UPDATING_REQUEST"
+                    }
                   }
                 } else {
                   console.log(
                     `No profile found or folder found for server ${currentServerId} for a tv request`
                   );
-                  return handleManualReq(request, payload)
+                  return {
+                    success: false,
+                    reason: "NO_PROFILE_FOUND"
+                  }
                 }
               } else {
                 console.log(`No server found for request ${request.id}`);
-                return handleManualReq(request, payload)
+                return {
+                    success: false,
+                    reason: "NO_SERVER_FOUND"
+                }
               }
         }
     }
 };
 
-export const handleTVNonAnime = async (request: GetRequestResponse, payload: OverseerrWebhookPayload) => {
+export const handleTVNonAnime = async (request: GetRequestResponse, payload: OverseerrWebhookPayload): Promise<ReturnType> => {
     const requestedSeasons = getHowManySeasons(payload)
 
     if(!requestedSeasons){
-        return handleManualReq(request, payload)
+        return {
+            success: false,
+            reason: "NO_SEASONS_FOUND"
+        }
     }
 
     const {requestedSeasons: requestedSeasonsArray, totalRequestedSeasons} = requestedSeasons
 
     if(totalRequestedSeasons > env.MAX_NON_ANIME_SEASONS) {
-        return handleManualReq(request, payload)
+        return {
+            success: false,
+            reason: "TOO_MANY_SEASONS"
+        }
     } else {
         const isLarge = await isLargeSeason(payload.media!.tmdbId, requestedSeasonsArray)
         if(isLarge) {
-            return handleManualReq(request, payload)
+            return {
+                success: false,
+                reason: "REQUESTED_LARGE_SEASON"
+            }
         } else {
             await updateRequestStatus(request.id, "approve")
-            return true
+            return {
+                success: true
+            }
         }
     }
 };
