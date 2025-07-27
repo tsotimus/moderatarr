@@ -19,6 +19,8 @@ const getSeasons = (payload: OverseerrWebhookPayload): number | null => {
 
 export const handleTVAnime = async (request: GetRequestResponse, payload: OverseerrWebhookPayload) => {
     console.log(payload)
+    const requestedSeasons = getSeasons(payload)
+    console.log("requestedSeasons", requestedSeasons)
   return true;
 };
 
@@ -26,5 +28,6 @@ export const handleTVNonAnime = async (request: GetRequestResponse, payload: Ove
     //Check how many seasons are in the request and how many there are in total
     console.log(payload)
     const requestedSeasons = getSeasons(payload)
+    console.log("requestedSeasons", requestedSeasons)
   return true;
 };
