@@ -8,6 +8,9 @@ const envSchema = z.object({
   OVERSEERR_API_TOKEN: z.string().min(1),
   OVERSEERR_BASE_URL: z.string().min(1),
   DB_FILE_NAME: z.string().min(1),
+  OVERSEERR_EMAIL: z.email(),
+  ADMIN_EMAIL: z.email(),
+  OVERSEERR_EMAIL_URL: z.url(),
 });
 
 // Validate and export

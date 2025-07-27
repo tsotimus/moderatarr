@@ -10,6 +10,8 @@ import {
   handleMovieAnime,
   handleMovieNonAnime,
 } from "./features/media/handleMovies";
+import { getRequest } from "./features/requests/getRequest";
+import { handleManualAlert } from "./features/email/handleManualAlert";
 
 onStartup();
 
@@ -84,7 +86,8 @@ app.post("/webhook/overseerr", async (c) => {
           const requestId = payload.request!.request_id;
 
           if (mediaType === "movie" && !isAnime) {
-            const updateRequest = await handleMovieNonAnime(requestId);
+            const request = await getRequest(requestId);
+            const updateRequest = await handleMovieNonAnime(request);
             if (updateRequest) {
               return c.json({
                 status: "success",
@@ -92,6 +95,7 @@ app.post("/webhook/overseerr", async (c) => {
                 requestId: requestId,
               });
             } else {
+              await handleManualAlert(request, payload.subject, "Movie");
               return c.json({
                 status: "error",
                 message: "Movie non-anime request failed",
@@ -101,7 +105,8 @@ app.post("/webhook/overseerr", async (c) => {
           }
 
           if (mediaType === "movie" && isAnime) {
-            const updateRequest = await handleMovieAnime(requestId);
+            const request = await getRequest(requestId);
+            const updateRequest = await handleMovieAnime(request);
             if (updateRequest) {
               return c.json({
                 status: "success",
@@ -109,6 +114,7 @@ app.post("/webhook/overseerr", async (c) => {
                 requestId: requestId,
               });
             } else {
+              await handleManualAlert(request, payload.subject, "Movie");
               return c.json({
                 status: "error",
                 message: "Movie anime request failed",

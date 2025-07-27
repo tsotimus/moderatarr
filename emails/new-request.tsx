@@ -36,30 +36,30 @@ import {
       <Preview>Manual action required for a new Overseerr request.</Preview>
       <Tailwind>
         <Body className="mx-auto my-auto bg-white font-sans">
-          <Container className="mx-auto my-[40px] w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
-            <Section className="mt-[32px]">
+          <Container className="mx-auto my-8 max-w-lg w-full rounded border border-solid border-gray-300 p-5">
+            <Section className="mt-8">
               <Img
                 src={LOGO_URL}
-                width="40"
-                height="37"
+                width="auto"
+                height="auto"
                 alt="Overseerr Logo"
-                className="mx-auto my-0"
+                className="mx-auto my-0 w-10 h-auto"
               />
             </Section>
   
-            <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
+            <Heading className="mx-0 my-8 p-0 text-center text-2xl font-normal text-black">
               Manual Attention Required
             </Heading>
   
-            <Text className="text-[14px] leading-[24px] text-black">
+            <Text className="text-sm leading-6 text-black">
               Hello Admin,
             </Text>
-            <Text className="text-[14px] leading-[24px] text-black">
+            <Text className="text-sm leading-6 text-black">
               A new media request from <strong>{requesterUsername}</strong> could
               not be processed automatically and requires your attention.
             </Text>
   
-            <Section className="my-[24px] rounded-md bg-gray-50 p-[20px] text-[14px]">
+            <Section className="my-6 rounded-md bg-gray-50 p-5 text-sm">
               <Text className="my-0">
                 <strong>Media Title:</strong> {mediaTitle}
               </Text>
@@ -72,22 +72,22 @@ import {
               </Text>
             </Section>
   
-            <Section className="mb-[32px] text-center">
+            <Section className="mb-8 text-center">
               <Button
-                className="rounded bg-[#553AF2] px-5 py-3 text-center text-[12px] font-semibold text-white no-underline"
+                className="rounded bg-purple-600 px-5 py-3 text-center text-xs font-semibold text-white no-underline inline-block"
                 href={`${overseerrUrl}/requests`}
               >
                 Manage Request
               </Button>
             </Section>
   
-            <Text className="text-[14px] leading-[24px] text-black">
+            <Text className="text-sm leading-6 text-black">
               Please log in to your Overseerr instance to review and manually
               process this request.
             </Text>
   
-            <Hr className="mx-0 my-[26px] w-full border border-solid border-[#eaeaea]" />
-            <Text className="text-[12px] leading-[24px] text-[#666666]">
+            <Hr className="mx-0 my-7 w-full border border-solid border-gray-300" />
+            <Text className="text-xs leading-6 text-gray-600">
               This is an automated notification from your Overseerr instance.
             </Text>
           </Container>

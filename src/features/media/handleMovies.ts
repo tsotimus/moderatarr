@@ -2,6 +2,7 @@ import { findAnimeFolder } from "../profiles/findAnimeFolder";
 import { findAnimeProfile } from "../profiles/findAnimeProfile";
 import { getRequest } from "../requests/getRequest";
 import { putRequest } from "../requests/putRequest";
+import { GetRequestResponse } from "../requests/types";
 import { updateRequestStatus } from "../requests/updateRequestStatus";
 import { findServer } from "../serverData/findServer";
 import {
@@ -11,38 +12,33 @@ import {
   getTags,
 } from "../serverData/getServer";
 
-export const handleMovieNonAnime = async (requestId: number) => {
+export const handleMovieNonAnime = async (request: GetRequestResponse) => {
   try {
-    const updateRequest = await updateRequestStatus(requestId, "approved");
+    const updateRequest = await updateRequestStatus(request.id, "approved");
     return updateRequest;
   } catch (error) {
-    console.error(`Error handling movie non-anime request ${requestId}`, error);
+    console.error(`Error handling movie non-anime request ${request.id}`, error);
     return null;
   }
 };
 
-export const handleMovieAnime = async (requestId: number) => {
-  const currentRequest = await getRequest(requestId);
-  console.log(currentRequest);
-  let currentServerId = currentRequest.serverId;
+export const handleMovieAnime = async (request: GetRequestResponse) => {
+  let currentServerId = request.serverId;
 
   if(!currentServerId) {
-    const server = await findServer({mediaType: "movie", is4k: currentRequest.is4k, isAnime: true});
+    const server = await findServer({mediaType: "movie", is4k: request.is4k, isAnime: true});
     currentServerId = server.serverId;
   }
 
   const server = await getServerByServerIdAndType(currentServerId, "radarr");
   if (server) {
     const profiles = getProfiles(server);
-    console.log("Profiles", profiles);
     const animeProfile = findAnimeProfile(profiles);
     const rootFolders = getRootFolders(server);
     const animeFolder = findAnimeFolder(rootFolders);
-    console.log("Anime profile", animeProfile);
-    console.log("Anime folder", animeFolder);
     if (animeProfile && animeFolder) {
       try {
-        await putRequest(requestId, {
+        await putRequest(request.id, {
           mediaType: "movie",
           serverId: currentServerId,
           profileId: animeProfile.id,
@@ -50,7 +46,7 @@ export const handleMovieAnime = async (requestId: number) => {
         });
         return true;
       } catch (error) {
-        console.error(`Error handling movie anime request ${requestId}`, error);
+        console.error(`Error handling movie anime request ${request.id}`, error);
         return false;
       }
     } else {
@@ -60,7 +56,7 @@ export const handleMovieAnime = async (requestId: number) => {
       return null;
     }
   } else {
-    console.log(`No server found for request ${requestId}`);
+    console.log(`No server found for request ${request.id}`);
     return null;
   }
 };
