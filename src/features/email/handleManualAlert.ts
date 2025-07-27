@@ -12,7 +12,7 @@ export const handleManualAlert = async (request: GetRequestResponse, title: stri
     await resend.emails.send({
         from: env.OVERSEERR_EMAIL,
         to: env.ADMIN_EMAIL,
-        subject: `Manual action required for a new Overseerr request.`,
+        subject: `Action required - A new request has been made`,
         react: OverseerrManualRequestEmail({
           requesterUsername: request.requestedBy.username,
           requesterEmail: request.requestedBy.email,
@@ -20,6 +20,11 @@ export const handleManualAlert = async (request: GetRequestResponse, title: stri
           mediaType: type,
           overseerrUrl: env.OVERSEERR_EMAIL_URL,
         }),
+        headers: {
+            "X-Priority": "1",
+            "X-MS-Priority": "High",
+            'Importance': 'high',
+        }
       });
     
 }

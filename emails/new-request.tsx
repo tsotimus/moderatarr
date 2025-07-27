@@ -77,13 +77,13 @@ import {
                 className="rounded bg-purple-600 px-5 py-3 text-center text-xs font-semibold text-white no-underline inline-block"
                 href={`${overseerrUrl}/requests`}
               >
-                Manage Request
+                Take Action
               </Button>
             </Section>
   
             <Text className="text-sm leading-6 text-black">
               Please log in to your Overseerr instance to review and manually
-              process this request.
+              process this request as soon as possible.
             </Text>
   
             <Hr className="mx-0 my-7 w-full border border-solid border-gray-300" />
