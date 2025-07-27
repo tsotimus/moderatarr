@@ -75,6 +75,7 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
                 const animeProfile = findAnimeProfile(profiles);
                 const rootFolders = getRootFolders(server);
                 const animeFolder = findAnimeFolder(rootFolders);
+                console.log(animeProfile, animeFolder, profiles, rootFolders)
                 if (animeProfile && animeFolder) {  
                   try {
                     await putRequest(request.id, {
