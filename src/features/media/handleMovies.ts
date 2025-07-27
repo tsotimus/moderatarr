@@ -28,13 +28,10 @@ export const handleMovieAnime = async (requestId: number) => {
 
   if(!currentServerId) {
     const server = await findServer({mediaType: "movie", is4k: currentRequest.is4k, isAnime: true});
-    console.log("Found a suitable server", server);
-    currentServerId = server.id;
+    currentServerId = server.serverId;
   }
 
-  console.log(currentServerId);
   const server = await getServerByServerIdAndType(currentServerId, "radarr");
-  console.log(server);
   if (server) {
     const profiles = getProfiles(server);
     const animeProfile = findAnimeProfile(profiles);
