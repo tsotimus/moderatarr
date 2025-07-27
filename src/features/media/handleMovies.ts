@@ -10,17 +10,29 @@ import {
   getServerByServerIdAndType,
 } from "../serverData/getServer";
 
-export const handleMovieNonAnime = async (request: GetRequestResponse) => {
+type ReturnType = {
+  success: true,
+} | {
+  success: false,
+  reason: "ERROR_APPROVING_REQUEST" | "ERROR_UPDATING_REQUEST" | "NO_PROFILE_FOUND" | "NO_SERVER_FOUND"
+}
+
+export const handleMovieNonAnime = async (request: GetRequestResponse): Promise<ReturnType> => {
   try {
-    const updateRequest = await updateRequestStatus(request.id, "approve");
-    return updateRequest;
+    await updateRequestStatus(request.id, "approve");
+    return {
+      success: true
+    };
   } catch (error) {
     console.error(`Error handling movie non-anime request ${request.id}`, error);
-    return null;
+    return {
+      success: false,
+      reason: "ERROR_APPROVING_REQUEST"
+    }
   }
 };
 
-export const handleMovieAnime = async (request: GetRequestResponse) => {
+export const handleMovieAnime = async (request: GetRequestResponse): Promise<ReturnType> => {
   let currentServerId = request.serverId;
 
   if(!currentServerId) {
@@ -42,19 +54,30 @@ export const handleMovieAnime = async (request: GetRequestResponse) => {
           profileId: animeProfile.id,
           rootFolder: animeFolder.path,
         });
-        return true;
+        return {
+          success: true
+        };
       } catch (error) {
         console.error(`Error handling movie anime request ${request.id}`, error);
-        return false;
+        return {
+          success: false,
+          reason: "ERROR_UPDATING_REQUEST"
+        }
       }
     } else {
       console.log(
         `No profile found or folder found for server ${currentServerId} for a movie request`
       );
-      return null;
+      return {
+        success: false,
+        reason: "NO_PROFILE_FOUND"
+      }
     }
   } else {
     console.log(`No server found for request ${request.id}`);
-    return null;
+    return {
+      success: false,
+      reason: "NO_SERVER_FOUND"
+    }
   }
 };

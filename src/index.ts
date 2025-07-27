@@ -84,13 +84,14 @@ app.post("/webhook/overseerr", async (c) => {
             .with({ mediaType: "movie", isAnime: false }, async () => {
               const request = await getRequest(requestId);
               const updateRequest = await handleMovieNonAnime(request);
-              if (updateRequest) {
+              if (updateRequest.success) {
                 return c.json({
                   status: "success",
                   message: "Movie non-anime request processed",
                   requestId: requestId,
                 });
               } else {
+                await awaitingApprovalAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
                 await handleAdminAlert(payload.request!, payload.subject, "Movie");
                 return c.json({
                   status: "error",
@@ -102,13 +103,14 @@ app.post("/webhook/overseerr", async (c) => {
             .with({ mediaType: "movie", isAnime: true }, async () => {
               const request = await getRequest(requestId);
               const updateRequest = await handleMovieAnime(request);
-              if (updateRequest) {
+              if (updateRequest.success) {
                 return c.json({
                   status: "success",
                   message: "Movie anime request processed",
                   requestId: requestId,
                 });
               } else {
+                await awaitingApprovalAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
                 await handleAdminAlert(payload.request!, payload.subject, "Movie");
                 return c.json({
                   status: "error",
