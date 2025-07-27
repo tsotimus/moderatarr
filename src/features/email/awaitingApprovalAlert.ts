@@ -4,6 +4,10 @@ import { AwaitingApprovalEmail } from "@/emails/awaiting-approval";
 import { OverseerrWebhookPayload } from "@/lib/overseerr";
 
 export const awaitingApprovalAlert = async (requester: NonNullable<OverseerrWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
+  if(!requester.requestedBy_email) {
+    console.log("No email found for requester, skipping email")
+    return;
+  }
     await resend.emails.send({
         from: `"Caucasus Cloud" <${env.OVERSEERR_EMAIL}>`,
         to: env.ADMIN_EMAIL,
