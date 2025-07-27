@@ -8,6 +8,8 @@ export const awaitingApprovalAlert = async (requester: NonNullable<OverseerrWebh
     console.log("No email found for requester, skipping email")
     return;
   }
+  
+  try {
     await resend.emails.send({
         from: `"Caucasus Cloud" <${env.OVERSEERR_EMAIL}>`,
         to: requester.requestedBy_email,
@@ -21,4 +23,7 @@ export const awaitingApprovalAlert = async (requester: NonNullable<OverseerrWebh
           showTooManySeasonsText: reason === "TOO_MANY_SEASONS"
         }),
       });
+  } catch (error) {
+    console.error("Failed to send awaiting approval email:", error);
+  }
 }
