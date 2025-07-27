@@ -34,9 +34,12 @@ export const handleMovieAnime = async (requestId: number) => {
   const server = await getServerByServerIdAndType(currentServerId, "radarr");
   if (server) {
     const profiles = getProfiles(server);
+    console.log("Profiles", profiles);
     const animeProfile = findAnimeProfile(profiles);
     const rootFolders = getRootFolders(server);
     const animeFolder = findAnimeFolder(rootFolders);
+    console.log("Anime profile", animeProfile);
+    console.log("Anime folder", animeFolder);
     if (animeProfile && animeFolder) {
       try {
         await putRequest(requestId, {
@@ -52,7 +55,7 @@ export const handleMovieAnime = async (requestId: number) => {
       }
     } else {
       console.log(
-        `No profile found for server ${currentServerId} for a movie request`
+        `No profile found or folder found for server ${currentServerId} for a movie request`
       );
       return null;
     }
