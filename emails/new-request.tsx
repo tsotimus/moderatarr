@@ -18,6 +18,7 @@ import {
     mediaTitle: string;
     mediaType: 'Movie' | 'TV Show';
     overseerrUrl: string; // e.g., 'http://localhost:5055'
+    reason: string; // Reason why manual attention is required
   }
   
   
@@ -27,6 +28,7 @@ import {
     mediaTitle,
     mediaType,
     overseerrUrl,
+    reason,
   }: NewRequestEmailProps) => (
     <Html>
       <Head />
@@ -57,6 +59,15 @@ import {
               <Text className="my-0">
                 <strong>Requested By:</strong> {requesterUsername}{' '}
                 {requesterEmail && `(${requesterEmail})`}
+              </Text>
+            </Section>
+
+            <Section className="my-6 rounded-md bg-red-50 border border-red-200 p-5 text-sm">
+              <Text className="my-0 font-semibold text-red-800">
+                Reason for Manual Review:
+              </Text>
+              <Text className="my-2 text-red-700">
+                {reason}
               </Text>
             </Section>
   

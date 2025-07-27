@@ -9,7 +9,7 @@ import { OverseerrWebhookPayload } from "@/lib/overseerr";
 
 
 
-export const handleAdminAlert = async (requester: NonNullable<OverseerrWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show") => {
+export const handleAdminAlert = async (requester: NonNullable<OverseerrWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
 
     await resend.emails.send({
         from: `"Caucasus Cloud" <${env.OVERSEERR_EMAIL}>`,
@@ -21,6 +21,7 @@ export const handleAdminAlert = async (requester: NonNullable<OverseerrWebhookPa
           mediaTitle: title,
           mediaType: type,
           overseerrUrl: env.OVERSEERR_EMAIL_URL,
+          reason: reason,
         }),
         headers: {
             "X-Priority": "1",

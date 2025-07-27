@@ -92,7 +92,7 @@ app.post("/webhook/overseerr", async (c) => {
                 });
               } else {
                 await awaitingApprovalAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
-                await handleAdminAlert(payload.request!, payload.subject, "Movie");
+                await handleAdminAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
                 return c.json({
                   status: "error",
                   message: "Movie non-anime request failed",
@@ -111,7 +111,7 @@ app.post("/webhook/overseerr", async (c) => {
                 });
               } else {
                 await awaitingApprovalAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
-                await handleAdminAlert(payload.request!, payload.subject, "Movie");
+                await handleAdminAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
                 return c.json({
                   status: "error",
                   message: "Movie anime request failed",
@@ -130,7 +130,7 @@ app.post("/webhook/overseerr", async (c) => {
                 });
               } else {
                 await awaitingApprovalAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
-                await handleAdminAlert(payload.request!, payload.subject, "TV Show");
+                await handleAdminAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 return c.json({
                   status: "error",
                   message: "TV non-anime request failed", 
@@ -149,7 +149,7 @@ app.post("/webhook/overseerr", async (c) => {
                 });
               } else {
                 await awaitingApprovalAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
-                await handleAdminAlert(payload.request!, payload.subject, "TV Show");
+                await handleAdminAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 return c.json({
                   status: "error",
                   message: "TV anime request failed",
