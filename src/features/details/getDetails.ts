@@ -31,7 +31,7 @@ interface SpokenLanguage {
     name: string
 }
 
-export interface Details {
+export interface MovieDetails {
     adult: boolean
     backdrop_path: string
     belongs_to_collection: Collection
@@ -60,8 +60,10 @@ export interface Details {
     vote_count: number
 }
 
+export interface TvDetails extends MovieDetails {}
+
 export const getMovieDetails = async (tmdbId: number) => {
-    const response = await axios.get<Details>(`https://api.themoviedb.org/3/movie/${tmdbId}`, {
+    const response = await axios.get<MovieDetails>(`https://api.themoviedb.org/3/movie/${tmdbId}`, {
         headers: {
             'Authorization': `Bearer ${env.TMDB_API_TOKEN}`
         }
@@ -71,7 +73,7 @@ export const getMovieDetails = async (tmdbId: number) => {
 }
 
 export const getTvDetails = async (tmdbId: number) => {
-    const response = await axios.get<Details>(`https://api.themoviedb.org/3/tv/${tmdbId}`, {
+    const response = await axios.get<TvDetails>(`https://api.themoviedb.org/3/tv/${tmdbId}`, {
         headers: {
             'Authorization': `Bearer ${env.TMDB_API_TOKEN}`
         }
