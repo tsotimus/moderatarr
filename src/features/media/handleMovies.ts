@@ -9,7 +9,6 @@ import {
   getProfiles,
   getRootFolders,
   getServerByServerIdAndType,
-  getTags,
 } from "../serverData/getServer";
 
 export const handleMovieNonAnime = async (request: GetRequestResponse) => {

@@ -118,8 +118,7 @@ app.post("/webhook/overseerr", async (c) => {
             })
             .with({ mediaType: "tv", isAnime: false }, async () => {
               const request = await getRequest(requestId);
-              console.log(request);
-              const updateRequest = await handleTVNonAnime(request);
+              const updateRequest = await handleTVNonAnime(request, payload);
               if (updateRequest) {
                 return c.json({
                   status: "success",
@@ -137,7 +136,7 @@ app.post("/webhook/overseerr", async (c) => {
             })
             .with({ mediaType: "tv", isAnime: true }, async () => {
               const request = await getRequest(requestId);
-              const updateRequest = await handleTVAnime(request);
+              const updateRequest = await handleTVAnime(request, payload);
               if (updateRequest) {
                 return c.json({
                   status: "success",

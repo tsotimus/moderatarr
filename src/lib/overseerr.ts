@@ -76,3 +76,5 @@ export const OverseerrWebhookPayloadSchema = z.object({
     value: z.string(),
   })).optional(),
 })
+
+export type OverseerrWebhookPayload = z.infer<typeof OverseerrWebhookPayloadSchema>
