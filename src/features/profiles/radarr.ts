@@ -1,24 +1,15 @@
 import { overseerrApi } from "@/lib/overseerr"
-import { OverseerrProfile } from "./types"
+import { OverseerrProfile, OverseerrRootFolder, OverseerrTag } from "./types"
 
 
 export interface RadarrInstance {
     id: number
     name: string
-    hostname: string
-    port: number
-    apiKey: string
-    useSsl: boolean
-    baseUrl: string
-    activeProfileId: number
-    activeProfileName: string
-    activeDirectory: string
     is4k: boolean
-    minimumAvailability: string
     isDefault: boolean
-    externalUrl: string
-    syncEnabled: boolean
-    preventSearch: boolean
+    activeDirectory: string
+    activeProfileId: number
+    activeTags: number[]
 }
 
 export const getRadarrInstances = async (): Promise<RadarrInstance[]> => {
@@ -26,8 +17,14 @@ export const getRadarrInstances = async (): Promise<RadarrInstance[]> => {
     return response.data
 }
 
+export interface RadarrDetails {
+    server: RadarrInstance
+    profiles: OverseerrProfile[]
+    rootFolders: OverseerrRootFolder[]
+    tags: OverseerrTag[]
+}
 
-export const getRadarrProfiles = async (radarrId: number): Promise<OverseerrProfile[]> => {
+export const getRadarrDetails = async (radarrId: number): Promise<RadarrDetails> => {
     const response = await overseerrApi.get(`/service/radarr/${radarrId}`)
     return response.data
 }

@@ -11,6 +11,14 @@ export const serversTable = sqliteTable("servers", {
   activeDirectory: text(),
   activeProfileId: int(),
   activeTags: text("active_tags", { mode: "json" }).$type<number[]>(), // JSON array of tag IDs
+  
+  // Sonarr-specific fields (nullable since they don't apply to Radarr)
+  activeAnimeProfileId: int(),
+  activeAnimeDirectory: text(),
+  activeLanguageProfileId: int(),
+  activeAnimeLanguageProfileId: int(),
+  activeAnimeTags: text("active_anime_tags", { mode: "json" }).$type<number[]>(),
+  
   profiles: text("profiles", { mode: "json" }).$type<ServerProfile[]>().notNull(), // JSON array of profile objects
   rootFolders: text("root_folders", { mode: "json" }).$type<ServerRootFolder[]>().notNull(), // JSON array of root folder objects
   tags: text("tags", { mode: "json" }).$type<ServerTag[]>(), // JSON array of tag objects

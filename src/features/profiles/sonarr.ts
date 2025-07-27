@@ -1,28 +1,19 @@
 import { overseerrApi } from "@/lib/overseerr"
-import { OverseerrProfile    } from "./types"
+import { OverseerrProfile, OverseerrRootFolder, OverseerrTag    } from "./types"
 
 export interface SonarrInstance {
     id: number
     name: string
-    hostname: string
-    port: number
-    apiKey: string
-    useSsl: boolean
-    baseUrl: string
-    activeProfileId: number
-    activeProfileName: string
-    activeDirectory: string
-    activeLanguageProfileId: number
-    activeAnimeProfileId: number
-    activeAnimeLanguageProfileId: number
-    activeAnimeProfileName: string
-    activeAnimeDirectory: string
     is4k: boolean
-    enableSeasonFolders: boolean
     isDefault: boolean
-    externalUrl: string
-    syncEnabled: boolean
-    preventSearch: boolean
+    activeDirectory: string
+    activeProfileId: number
+    activeAnimeProfileId: number
+    activeAnimeDirectory: string
+    activeLanguageProfileId: number
+    activeAnimeLanguageProfileId: number
+    activeTags: number[]
+    activeAnimeTags: number[]
 }
 
 export const getSonarrInstances = async (): Promise<SonarrInstance[]> => {
@@ -32,6 +23,8 @@ export const getSonarrInstances = async (): Promise<SonarrInstance[]> => {
 export interface SonarrDetails {
     server: SonarrInstance
     profiles: OverseerrProfile[]
+    rootFolders: OverseerrRootFolder[]
+    tags: OverseerrTag[]
 }
 
 

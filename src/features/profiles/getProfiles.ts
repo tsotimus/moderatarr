@@ -6,3 +6,4 @@
 //     const profiles = await db.select().from(profilesTable).where(and(eq(profilesTable.serverId, serverId), eq(profilesTable.serverType, serverType))).limit(1)
 //     return profiles[0] ?? null
 // }
+
