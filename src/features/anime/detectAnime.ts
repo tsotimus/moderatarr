@@ -15,7 +15,7 @@ export const detectAnime = async (tmdbId: number, mediaType: "movie" | "tv") => 
                 return await handleMovieDetails(tmdbId)
             }
         } catch (error) {
-            console.error(error)
+            console.error(`Error detecting anime for movie ${tmdbId}`, error)
             return await handleMovieDetails(tmdbId)
         }
         
@@ -30,7 +30,7 @@ export const detectAnime = async (tmdbId: number, mediaType: "movie" | "tv") => 
                 return await handleTvDetails(tmdbId)
             }
         } catch (error) {
-            console.error(error)
+            console.error(`Error detecting anime for tv ${tmdbId}`, error)
             return await handleTvDetails(tmdbId)
         }
     }
