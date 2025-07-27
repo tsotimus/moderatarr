@@ -1,15 +1,15 @@
-import { GetRequestResponse } from "../requests/types";
 import { env } from "@/env";
 import { resend } from "@/lib/resend";
 import { AwaitingApprovalEmail } from "@/emails/awaiting-approval";
+import { OverseerrWebhookPayload } from "@/lib/overseerr";
 
-export const awaitingApprovalAlert = async (request: GetRequestResponse, title: string, type: "Movie" | "TV Show", reason: string) => {
+export const awaitingApprovalAlert = async (requester: NonNullable<OverseerrWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
     await resend.emails.send({
-        from: env.OVERSEERR_EMAIL,
+        from: `"Caucasus Cloud" <${env.OVERSEERR_EMAIL}>`,
         to: env.ADMIN_EMAIL,
         subject: `Awaiting approval - Your request has been made`,
         react: AwaitingApprovalEmail({
-          requesterUsername: request.requestedBy.username,
+          requesterUsername: requester.requestedBy_username ?? "",
           mediaTitle: title,
           mediaType: type,
           reason: reason,

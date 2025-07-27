@@ -127,7 +127,7 @@ app.post("/webhook/overseerr", async (c) => {
                   requestId: requestId,
                 });
               } else {
-                await awaitingApprovalAlert(request, payload.subject, "TV Show", updateRequest.reason);
+                await awaitingApprovalAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 await handleAdminAlert(payload.request!, payload.subject, "TV Show");
                 return c.json({
                   status: "error",
@@ -146,7 +146,7 @@ app.post("/webhook/overseerr", async (c) => {
                   requestId: requestId,
                 });
               } else {
-                await awaitingApprovalAlert(request, payload.subject, "TV Show", updateRequest.reason);
+                await awaitingApprovalAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 await handleAdminAlert(payload.request!, payload.subject, "TV Show");
                 return c.json({
                   status: "error",

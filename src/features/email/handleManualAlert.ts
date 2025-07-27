@@ -12,7 +12,7 @@ import { OverseerrWebhookPayload } from "@/lib/overseerr";
 export const handleAdminAlert = async (requester: NonNullable<OverseerrWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show") => {
 
     await resend.emails.send({
-        from: env.OVERSEERR_EMAIL,
+        from: `"Caucasus Cloud" <${env.OVERSEERR_EMAIL}>`,
         to: env.ADMIN_EMAIL,
         subject: `Action required - A new request has been made`,
         react: NewRequestEmail({
