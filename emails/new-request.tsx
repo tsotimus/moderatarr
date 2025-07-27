@@ -21,8 +21,6 @@ import {
     overseerrUrl: string; // e.g., 'http://localhost:5055'
   }
   
-  const LOGO_URL =
-    'https://github.com/sct/overseerr/blob/develop/public/android-chrome-512x512.png';
   
   export const OverseerrManualRequestEmail = ({
     requesterUsername,
@@ -37,15 +35,6 @@ import {
       <Tailwind>
         <Body className="mx-auto my-auto bg-white font-sans">
           <Container className="mx-auto my-8 max-w-lg w-full rounded border border-solid border-gray-300 p-5">
-            <Section className="mt-8">
-              <Img
-                src={LOGO_URL}
-                width="auto"
-                height="auto"
-                alt="Overseerr Logo"
-                className="mx-auto my-0 w-10 h-auto"
-              />
-            </Section>
   
             <Heading className="mx-0 my-8 p-0 text-center text-2xl font-normal text-black">
               Manual Attention Required
