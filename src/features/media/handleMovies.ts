@@ -31,13 +31,14 @@ export const handleMovieAnime = async (requestId: number) => {
     currentServerId = server.id;
   }
 
+  console.log(currentServerId);
   const server = await getServerByServerIdAndType(currentServerId, "radarr");
+  console.log(server);
   if (server) {
     const profiles = getProfiles(server);
     const animeProfile = findAnimeProfile(profiles);
     const rootFolders = getRootFolders(server);
     const animeFolder = findAnimeFolder(rootFolders);
-    const tags = getTags(server);
     if (animeProfile && animeFolder) {
       try {
         await putRequest(requestId, {
