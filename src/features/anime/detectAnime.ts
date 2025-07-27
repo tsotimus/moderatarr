@@ -7,6 +7,7 @@ export const detectAnime = async (tmdbId: number, mediaType: "movie" | "tv") => 
 
         try{    
             const movieKeywords = await getMovieKeywords(tmdbId)
+            console.log(movieKeywords)
             //Loop through keywords and check if any of them are anime keywords. Use ts-pattern to match the keywords. and use some...
             const isAnime = movieKeywords.keywords.some(keyword => keyword.name === "anime")
             if(isAnime) {
@@ -23,8 +24,7 @@ export const detectAnime = async (tmdbId: number, mediaType: "movie" | "tv") => 
 
         try{
             const tvKeywords = await getTvKeywords(tmdbId)
-            console.log(tvKeywords)
-            const isAnime = tvKeywords.keywords.some(keyword => keyword.name === "anime")
+            const isAnime = tvKeywords.results.some(keyword => keyword.name === "anime")
             if(isAnime) {
                 return true
             } else {

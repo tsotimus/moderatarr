@@ -15,7 +15,12 @@ export const getMovieKeywords = async (tmdbId: number) => {
     return response.data
 }
 
+type TVKeywordsResponse = {
+    id: number
+    results: Keyword[]
+}
+
 export const getTvKeywords = async (tmdbId: number) => {
-    const response = await tmdbApi.get<Keywords>(`/tv/${tmdbId}/keywords`)
+    const response = await tmdbApi.get<TVKeywordsResponse>(`/tv/${tmdbId}/keywords`)
     return response.data
 }
