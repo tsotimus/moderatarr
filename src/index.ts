@@ -12,6 +12,7 @@ import {
 } from "./features/media/handleMovies";
 import { getRequest } from "./features/requests/getRequest";
 import { handleManualAlert } from "./features/email/handleManualAlert";
+import { handleTVAnime, handleTVNonAnime } from "./features/media/handleTv";
 
 onStartup();
 
@@ -64,7 +65,6 @@ app.post("/webhook/overseerr", async (c) => {
       await addContact(payload.request!.requestedBy_email);
     }
 
-    // Use ts-pattern for better pattern matching
     const result = await match(payload)
       .with(
         {
@@ -73,71 +73,89 @@ app.post("/webhook/overseerr", async (c) => {
         async (payload) => {
           const tmdbId = payload.media!.tmdbId;
 
-          // Log the complete payload for debugging
-          console.log(
-            "🔍 Complete webhook payload:",
-            JSON.stringify(payload, null, 2)
-          );
-
           const mediaType = getMediaType(payload.media!.media_type);
 
           const isAnime = await detectAnime(tmdbId, mediaType);
 
           const requestId = payload.request!.request_id;
 
-          if (mediaType === "movie" && !isAnime) {
-            const request = await getRequest(requestId);
-            const updateRequest = await handleMovieNonAnime(request);
-            if (updateRequest) {
-              return c.json({
-                status: "success",
-                message: "Movie non-anime request processed",
-                requestId: requestId,
-              });
-            } else {
-              await handleManualAlert(request, payload.subject, "Movie");
-              return c.json({
-                status: "error",
-                message: "Movie non-anime request failed",
-                requestId: requestId,
-              });
-            }
-          }
+          const mediaProcessingResult = await match({ mediaType, isAnime })
+            .with({ mediaType: "movie", isAnime: false }, async () => {
+              const request = await getRequest(requestId);
+              const updateRequest = await handleMovieNonAnime(request);
+              if (updateRequest) {
+                return c.json({
+                  status: "success",
+                  message: "Movie non-anime request processed",
+                  requestId: requestId,
+                });
+              } else {
+                await handleManualAlert(request, payload.subject, "Movie");
+                return c.json({
+                  status: "error",
+                  message: "Movie non-anime request failed",
+                  requestId: requestId,
+                });
+              }
+            })
+            .with({ mediaType: "movie", isAnime: true }, async () => {
+              const request = await getRequest(requestId);
+              const updateRequest = await handleMovieAnime(request);
+              if (updateRequest) {
+                return c.json({
+                  status: "success",
+                  message: "Movie anime request processed",
+                  requestId: requestId,
+                });
+              } else {
+                await handleManualAlert(request, payload.subject, "Movie");
+                return c.json({
+                  status: "error",
+                  message: "Movie anime request failed",
+                  requestId: requestId,
+                });
+              }
+            })
+            .with({ mediaType: "tv", isAnime: false }, async () => {
+              const request = await getRequest(requestId);
+              console.log(request);
+              const updateRequest = await handleTVNonAnime(request);
+              if (updateRequest) {
+                return c.json({
+                  status: "success",
+                  message: "TV non-anime request processed",
+                  requestId: requestId,
+                });
+              } else {
+                await handleManualAlert(request, payload.subject, "TV Show");
+                return c.json({
+                  status: "error",
+                  message: "TV non-anime request failed", 
+                  requestId: requestId,
+                });
+              }
+            })
+            .with({ mediaType: "tv", isAnime: true }, async () => {
+              const request = await getRequest(requestId);
+              const updateRequest = await handleTVAnime(request);
+              if (updateRequest) {
+                return c.json({
+                  status: "success",
+                  message: "TV anime request processed",
+                  requestId: requestId,
+                });
+              } else {
+                await handleManualAlert(request, payload.subject, "TV Show");
+                return c.json({
+                  status: "error",
+                  message: "TV anime request failed",
+                  requestId: requestId,
+                });
+              }
+            })
+            .exhaustive();
 
-          if (mediaType === "movie" && isAnime) {
-            const request = await getRequest(requestId);
-            const updateRequest = await handleMovieAnime(request);
-            if (updateRequest) {
-              return c.json({
-                status: "success",
-                message: "Movie anime request processed",
-                requestId: requestId,
-              });
-            } else {
-              await handleManualAlert(request, payload.subject, "Movie");
-              return c.json({
-                status: "error",
-                message: "Movie anime request failed",
-                requestId: requestId,
-              });
-            }
-          }
-
-          //Only TV now
-
-          // const getRequest = await overseerrApi.get(`/request/${requestId}`)
-
-          if (isAnime) {
-            console.log(`Media is anime`);
-          } else {
-            console.log(`Media is not anime`);
-          }
-
-          return c.json({
-            status: "success",
-            message: "Media request processed",
-            tmdbId: tmdbId,
-          });
+          return mediaProcessingResult;
         }
       )
       .with(
