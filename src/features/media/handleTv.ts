@@ -83,6 +83,7 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
                       serverId: currentServerId,
                       profileId: animeProfile.id,
                       rootFolder: animeFolder.path,
+                      seasons: requestedSeasonsArray.map(season => parseInt(season))
                     });
                     await updateRequestStatus(request.id, "approve")
                     return true
