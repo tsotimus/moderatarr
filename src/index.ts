@@ -38,13 +38,6 @@ app.post("/webhook/overseerr", async (c) => {
       `📥 Received notification type: ${rawPayload.notification_type || "UNKNOWN"}`
     );
 
-    // Log the complete payload for debugging
-    console.log(
-      "🔍 Complete webhook payload:",
-      JSON.stringify(rawPayload, null, 2)
-    );
-
-    // Validate payload with Zod
     const parseResult = OverseerrWebhookPayloadSchema.safeParse(rawPayload);
 
     if (!parseResult.success) {
