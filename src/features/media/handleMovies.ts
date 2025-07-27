@@ -7,6 +7,7 @@ import {
   getProfiles,
   getRootFolders,
   getServerByServerIdAndType,
+  getTags,
 } from "../serverData/getServer";
 
 export const handleMovieNonAnime = async (requestId: number) => {
@@ -29,6 +30,7 @@ export const handleMovieAnime = async (requestId: number) => {
     const animeProfile = findAnimeProfile(profiles);
     const rootFolders = getRootFolders(server);
     const animeFolder = findAnimeFolder(rootFolders);
+    const tags = getTags(server);
     if (animeProfile && animeFolder) {
       try {
         await putRequest(requestId, {
