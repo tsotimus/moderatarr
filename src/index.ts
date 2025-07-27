@@ -12,6 +12,10 @@ import { getRequest } from './features/requests/getRequest'
 import { onStartup } from './features/startup/onStartup'
 // import { getProfilesByServerId } from './features/profiles/getProfiles'
 import { putRequest } from './features/requests/putRequest'
+import { getProfiles, getRootFolders, getServerByServerIdAndType } from './features/serverData/getServer'
+import { findAnimeProfile } from './features/profiles/findAnimeProfile'
+import { findAnimeFolder } from './features/profiles/findAnimeFolder'
+import { handleMovieAnime, handleMovieNonAnime } from './features/media/handleMovies'
 
 onStartup()
 
@@ -81,32 +85,42 @@ app.post('/webhook/overseerr', async (c) => {
 
 
           if(mediaType === "movie" && !isAnime) {
-            const updateRequest = await updateRequestStatus(requestId, "approved")
+            const updateRequest = await handleMovieNonAnime(requestId)
+            if(updateRequest) {
+            return c.json({
+              status: 'success',
+              message: 'Movie non-anime request processed',
+              requestId: requestId
+            })
+            } else {
+              return c.json({
+                status: 'error',
+                message: 'Movie non-anime request failed',
+                requestId: requestId
+              })
+            }
           } 
 
           if(mediaType === "movie" && isAnime) {
-            const currentRequest = await getRequest(requestId)
-            const currentServerId = currentRequest.serverId
-
-            // const profile = await getProfilesByServerId(currentServerId, "radarr")
-
-            // if(profile){
-            //   await putRequest(requestId, {
-            //     mediaType: "movie",
-            //     serverId: currentServerId,
-            //     profileId: profile.id,
-            //     rootFolder: currentRequest.rootFolder,
-            //   })
-            // } else {
-            //   console.log(`No profile found for server ${currentServerId} for a movie request`)
-            // }
+            const updateRequest = await handleMovieAnime(requestId)
+            if(updateRequest) {
+            return c.json({
+                status: 'success',
+                message: 'Movie anime request processed',
+                requestId: requestId
+              })
+            } else {
+              return c.json({
+                status: 'error',
+                message: 'Movie anime request failed',
+                requestId: requestId
+              })
+            }
           }
 
-          if(mediaType === "tv" && isAnime) {
-            //Implement 
-          }
+
+          //Only TV now
             
-
 
           // const getRequest = await overseerrApi.get(`/request/${requestId}`)
           
