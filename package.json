@@ -2,7 +2,10 @@
   "name": "aniflowarr",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "dev:e": "email dev"
+    "dev:e": "email dev",
+    "start": "bun run src/index.ts",
+    "docker:build": "docker build -t moderatarr .",
+    "docker:run": "docker run -d --name moderatarr -p 3000:3000 --env-file .env moderatarr"
   },
   "dependencies": {
     "@react-email/components": "0.3.2",
