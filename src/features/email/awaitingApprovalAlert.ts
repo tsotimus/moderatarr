@@ -1,9 +1,9 @@
 import { env } from "@/env";
 import { resend } from "@/lib/resend";
 import { AwaitingApprovalEmail } from "@/emails/awaiting-approval";
-import { OverseerrWebhookPayload } from "@/lib/overseerr";
+import { GeneralWebhookPayload } from "@/lib/overseerr/schema";
 
-export const awaitingApprovalAlert = async (requester: NonNullable<OverseerrWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
+export const awaitingApprovalAlert = async (requester: NonNullable<GeneralWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
   if(!requester.requestedBy_email) {
     console.log("No email found for requester, skipping email")
     return;

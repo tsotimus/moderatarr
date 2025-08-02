@@ -1,10 +1,10 @@
+import { GeneralWebhookPayloadSchema } from './lib/overseerr/schema';
 import { Hono } from "hono";
 import { match } from "ts-pattern";
 import { detectAnime } from "@/features/anime/detectAnime";
 import { isNewUser } from "@/features/email/isNewUser";
 import { addContact } from "@/features/email/addContact";
 import { getMediaType } from "@/features/media/getMediaType";
-import { OverseerrWebhookPayloadSchema } from "@/lib/overseerr";
 import { onStartup } from "./features/startup/onStartup";
 import {
   handleMovieAnime,
@@ -33,12 +33,7 @@ app.post("/webhook/overseerr", async (c) => {
   try {
     const rawPayload = await c.req.json();
 
-    // Always log the notification type first for testing purposes
-    console.log(
-      `📥 Received notification type: ${rawPayload.notification_type || "UNKNOWN"}`
-    );
-
-    const parseResult = OverseerrWebhookPayloadSchema.safeParse(rawPayload);
+    const parseResult = GeneralWebhookPayloadSchema.safeParse(rawPayload);
 
     if (!parseResult.success) {
       console.error("Invalid payload structure:", parseResult.error.issues);
@@ -162,7 +157,10 @@ app.post("/webhook/overseerr", async (c) => {
           notification_type: payload.notification_type,
         });
       })
-      .otherwise(async () => {
+      .otherwise(async (payload) => {
+        console.log(
+          `📥 Received notification type: ${payload.notification_type || "UNKNOWN"}`
+        );
         return c.json({
           status: "acknowledged",
           message: "Webhook received but not processed (not a movie request)",

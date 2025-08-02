@@ -3,9 +3,9 @@
 import { NewRequestEmail } from '@/emails/new-request';
 import { resend } from "@/lib/resend";
 import { env } from "@/env";
-import { OverseerrWebhookPayload } from "@/lib/overseerr";
+import { GeneralWebhookPayload } from "@/lib/overseerr/schema";
 
-export const handleAdminAlert = async (requester: NonNullable<OverseerrWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
+export const handleAdminAlert = async (requester: NonNullable<GeneralWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
     try {
         await resend.emails.send({
             from: `"Caucasus Cloud" <${env.OVERSEERR_EMAIL}>`,

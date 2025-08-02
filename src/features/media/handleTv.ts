@@ -1,4 +1,4 @@
-import { OverseerrWebhookPayload } from "@/lib/overseerr";
+import { GeneralWebhookPayload } from "@/lib/overseerr/schema";
 import { GetRequestResponse } from "../requests/types";
 import { env } from "@/env";
 import { getTvDetails } from "../details/getDetails";
@@ -16,7 +16,7 @@ type ReturnType = {
     reason: "REQUESTED_LARGE_SEASON"| "TOO_MANY_SEASONS" | "NO_SERVER_FOUND" | "NO_PROFILE_FOUND" | "NO_FOLDER_FOUND" | "ERROR_UPDATING_REQUEST" | "NO_SEASONS_FOUND"
 }
 
-const getHowManySeasons = (payload: OverseerrWebhookPayload): {requestedSeasons: string[], totalRequestedSeasons: number} | null => {
+const getHowManySeasons = (payload: GeneralWebhookPayload): {requestedSeasons: string[], totalRequestedSeasons: number} | null => {
     const extras = payload.extra
     if(extras) {
         const requestedSeasons = extras.find(extra => extra.name === "Requested Seasons")
@@ -48,7 +48,7 @@ const isLargeSeason = async (tmdbId: number, requestedSeasons: string[]) => {
 
 
 
-export const handleTVAnime = async (request: GetRequestResponse, payload: OverseerrWebhookPayload): Promise<ReturnType> => {
+export const handleTVAnime = async (request: GetRequestResponse, payload: GeneralWebhookPayload): Promise<ReturnType> => {
     const requestedSeasons = getHowManySeasons(payload)
 
     if(!requestedSeasons) {
@@ -126,7 +126,7 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Overse
     }
 };
 
-export const handleTVNonAnime = async (request: GetRequestResponse, payload: OverseerrWebhookPayload): Promise<ReturnType> => {
+export const handleTVNonAnime = async (request: GetRequestResponse, payload: GeneralWebhookPayload): Promise<ReturnType> => {
     const requestedSeasons = getHowManySeasons(payload)
 
     if(!requestedSeasons){
