@@ -31,6 +31,7 @@ app.get("/health", (c) => {
 
 // Main webhook endpoint for Overseerr
 app.post("/webhook/overseerr", async (c) => {
+  console.log("Received webhook");
   try {
     const rawPayload = await c.req.json();
 
