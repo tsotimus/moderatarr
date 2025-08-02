@@ -31,12 +31,12 @@ USER nodejs
 # Set production environment
 ENV NODE_ENV=production
 
-# Expose port
-EXPOSE 3000
+# Expose port (use PORT env var, default to 3000)
+EXPOSE ${PORT:-3000}
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3000/health || exit 1
+    CMD curl -f http://localhost:${PORT:-3000}/health || exit 1
 
 # Start the application (run migrations first, then start)
 CMD ["sh", "-c", "bunx drizzle-kit migrate && bun start"] 
