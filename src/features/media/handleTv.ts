@@ -67,6 +67,7 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Genera
         }
     } else {
         const isLarge = await isLargeSeason(payload.media!.tmdbId, requestedSeasonsArray)
+        //TODO: Still run anime logic, but don't approve the request.
         if(isLarge) {
             return {
                 success: false,
