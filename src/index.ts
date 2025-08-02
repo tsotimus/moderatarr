@@ -1,6 +1,6 @@
 import { GeneralWebhookPayloadSchema } from './lib/overseerr/schema';
 import { Hono } from "hono";
-import { match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import { detectAnime } from "@/features/anime/detectAnime";
 import { isNewUser } from "@/features/email/isNewUser";
 import { addContact } from "@/features/email/addContact";
@@ -150,6 +150,14 @@ app.post("/webhook/overseerr", async (c) => {
           return mediaProcessingResult;
         }
       )
+      .with({ notification_type: P.union("MEDIA_AUTO_APPROVED", "MEDIA_APPROVED") }, async (payload) => {
+        console.log(payload);
+        return c.json({
+          status: "acknowledged",
+          message: `Media ${payload.notification_type === "MEDIA_AUTO_APPROVED" ? "auto approved" : "approved"}`,
+          notification_type: payload.notification_type,
+        });
+      })
       .with({ notification_type: "TEST_NOTIFICATION" }, async () => {
         return c.json({
           status: "acknowledged",

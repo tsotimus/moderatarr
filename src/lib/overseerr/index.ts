@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { env } from '@/env';
-import { z } from 'zod';
 
 // Generic axios instance for Overseerr API with API Key Authentication
 export const overseerrApi = axios.create({

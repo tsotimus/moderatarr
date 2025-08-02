@@ -56,7 +56,6 @@ export const ExtraFieldSchema = z.object({
 export const GeneralWebhookPayloadSchema = z.object({
     notification_type: z.enum([
       "TEST_NOTIFICATION",
-      "MEDIA_REQUEST",
       "MEDIA_AUTO_APPROVED",
       "MEDIA_PENDING",
       "MEDIA_APPROVED",
