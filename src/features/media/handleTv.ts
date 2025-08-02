@@ -50,7 +50,7 @@ const isLargeSeason = async (tmdbId: number, requestedSeasons: string[]) => {
 
 export const handleTVAnime = async (request: GetRequestResponse, payload: GeneralWebhookPayload): Promise<ReturnType> => {
     const requestedSeasons = getHowManySeasons(payload)
-
+    console.log(payload);
     if(!requestedSeasons) {
         return {
             success: false,
@@ -60,6 +60,7 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Genera
     const {requestedSeasons: requestedSeasonsArray, totalRequestedSeasons} = requestedSeasons
 
     if(totalRequestedSeasons > env.MAX_ANIME_SEASONS) {
+        //TODO: Still run anime logic, but don't approve the request.
         return {
             success: false,
             reason: "TOO_MANY_SEASONS"
