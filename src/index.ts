@@ -14,6 +14,7 @@ import { getRequest } from "./features/requests/getRequest";
 import { handleAdminAlert } from "./features/email/handleManualAlert";
 import { handleTVAnime, handleTVNonAnime } from "./features/media/handleTv";
 import { awaitingApprovalAlert } from "./features/email/awaitingApprovalAlert";
+import { env } from './env';
 
 onStartup();
 
@@ -195,4 +196,7 @@ app.post("/webhook/overseerr", async (c) => {
   }
 });
 
-export default app;
+export default { 
+  port: env.PORT, 
+  fetch: app.fetch, 
+} 
