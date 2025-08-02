@@ -55,10 +55,6 @@ app.post("/webhook/overseerr", async (c) => {
 
     const payload = parseResult.data;
 
-    const isNew = await isNewUser(payload.request!.requestedBy_email);
-    if (isNew) {
-      await addContact(payload.request!.requestedBy_email);
-    }
 
     const result = await match(payload)
       .with(
@@ -66,6 +62,12 @@ app.post("/webhook/overseerr", async (c) => {
           notification_type: "MEDIA_PENDING",
         },
         async (payload) => {
+
+          const isNew = await isNewUser(payload.request!.requestedBy_email);
+          if (isNew) {
+            await addContact(payload.request!.requestedBy_email);
+          }
+
           const tmdbId = payload.media!.tmdbId;
 
           const mediaType = getMediaType(payload.media!.media_type);
