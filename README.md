@@ -67,9 +67,9 @@ That's it! Your Moderatarr instance is now running and ready to process anime re
 | `TMDB_API_TOKEN` | The Movie Database API token | `eyJhbGciOiJIUzI1NiJ9...` |
 | `OVERSEERR_API_TOKEN` | Your Overseerr API token | `MTcxNjQ4NzE4NXxZV...` |
 | `OVERSEERR_BASE_URL` | Your Overseerr base URL | `http://overseerr:5055` |
-| `OVERSEERR_EMAIL` | Overseerr notification email | `overseerr@yourdomain.com` |
-| `ADMIN_EMAIL` | Admin email for alerts | `admin@yourdomain.com` |
-| `OVERSEERR_EMAIL_URL` | Overseerr email URL | `http://overseerr:5055` |
+| `OVERSEERR_EMAIL` | Your domain email that your sending emails from. Should be from a valid resend domain | `overseerr@yourdomain.com` |
+| `ADMIN_EMAIL` | Your admin email for email alerts. Can be any email you want to receive alerts | `admin@yourdomain.com` |
+| `OVERSEERR_EMAIL_URL` | Your Overseerr URL, used in the emails for quick access to the requests | `http://overseerr:5055` |
 
 ### Optional Environment Variables
 
@@ -77,5 +77,5 @@ That's it! Your Moderatarr instance is now running and ready to process anime re
 |----------|-------------|---------|
 | `MAX_NON_ANIME_SEASONS` | Max seasons for non-anime shows | `2` |
 | `MAX_ANIME_SEASONS` | Max seasons for anime shows | `2` |
-| `DEFAULT_TO_LATEST` | Default to latest season | `true` |
 | `DB_FILE_NAME` | Database file path | `moderatarr.db` |
+<!-- | `DEFAULT_TO_LATEST` | Default to latest season | `true` | -->

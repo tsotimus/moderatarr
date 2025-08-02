@@ -7,13 +7,13 @@ const envSchema = z.object({
   TMDB_API_TOKEN: z.string().min(1),
   OVERSEERR_API_TOKEN: z.string().min(1),
   OVERSEERR_BASE_URL: z.string().min(1),
-  DB_FILE_NAME: z.string().min(1),
+  DB_FILE_NAME: z.string().min(1).optional().default("moderatarr.db"),
   OVERSEERR_EMAIL: z.email(),
   ADMIN_EMAIL: z.email(),
   OVERSEERR_EMAIL_URL: z.url(),
-  MAX_NON_ANIME_SEASONS: z.coerce.number().min(1).default(2),
-  MAX_ANIME_SEASONS: z.coerce.number().min(1).default(2),
-  DEFAULT_TO_LATEST: z.stringbool({truthy: ["true"], falsy: ["false"]}),
+  MAX_NON_ANIME_SEASONS: z.coerce.number().min(1).default(2).optional(),
+  MAX_ANIME_SEASONS: z.coerce.number().min(1).default(2).optional(),
+  // DEFAULT_TO_LATEST: z.stringbool({truthy: ["true"], falsy: ["false"]}),
 });
 
 // Validate and export
