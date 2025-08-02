@@ -33,6 +33,10 @@ app.post("/webhook/overseerr", async (c) => {
   try {
     const rawPayload = await c.req.json();
 
+    console.log(
+      `📥 Received notification type: ${rawPayload.notification_type || "UNKNOWN"}`
+    );
+
     const parseResult = GeneralWebhookPayloadSchema.safeParse(rawPayload);
 
     if (!parseResult.success) {
@@ -176,7 +180,6 @@ app.post("/webhook/overseerr", async (c) => {
           media_type: payload.media?.media_type,
         });
       });
-
     return result;
   } catch (error) {
     console.error("Error processing webhook:", error);
