@@ -1,5 +1,5 @@
 {
-  "name": "aniflowarr",
+  "name": "moderatarr",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "dev:e": "email dev",
