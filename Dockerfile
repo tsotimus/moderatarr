@@ -1,4 +1,25 @@
-# Use Bun's official image as base
+# Stage 1: Build and migrate
+FROM oven/bun:1.2.19-slim AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json bun.lock* ./
+
+# Install all dependencies (including dev dependencies for drizzle-kit)
+RUN bun install --frozen-lockfile
+
+# Copy source code and config files
+COPY . .
+
+# Create data directory for SQLite database
+RUN mkdir -p /app/data
+
+# Run database migrations
+RUN bun drizzle-kit migrate
+
+# Stage 2: Production
 FROM oven/bun:1.2.19-slim
 
 # Set working directory
@@ -12,14 +33,18 @@ RUN apt-get update && apt-get install -y \
 # Copy package files
 COPY package.json bun.lock* ./
 
-# Install dependencies
+# Install only production dependencies
 RUN bun install --frozen-lockfile --production
 
-# Copy source code
-COPY . .
+# Copy source code from builder stage
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/drizzle ./drizzle
+COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
+COPY --from=builder /app/emails ./emails
 
-# Create data directory for SQLite database
-RUN mkdir -p /app/data
+# Copy the database with migrations applied
+COPY --from=builder /app/data ./data
+COPY --from=builder /app/moderatarr.db ./moderatarr.db
 
 # Use non-root user for security
 RUN addgroup --gid 1001 --system nodejs && \
@@ -38,5 +63,5 @@ EXPOSE ${PORT:-3000}
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT:-3000}/health || exit 1
 
-# Start the application (run migrations first, then start)
-CMD ["sh", "-c", "bunx drizzle-kit migrate && bun start"] 
+# Start the application
+CMD ["bun", "start"] 
