@@ -11,8 +11,8 @@ const envSchema = z.object({
   OVERSEERR_EMAIL: z.email(),
   ADMIN_EMAIL: z.email(),
   OVERSEERR_EMAIL_URL: z.url(),
-  MAX_NON_ANIME_SEASONS: z.coerce.number().min(1).default(2).optional(),
-  MAX_ANIME_SEASONS: z.coerce.number().min(1).default(2).optional(),
+  MAX_NON_ANIME_SEASONS: z.coerce.number().min(1).optional().default(2),
+  MAX_ANIME_SEASONS: z.coerce.number().min(1).optional().default(2),
   // DEFAULT_TO_LATEST: z.stringbool({truthy: ["true"], falsy: ["false"]}),
 });
 
