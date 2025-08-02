@@ -20,7 +20,7 @@ onStartup();
 const app = new Hono();
 
 app.get("/", (c) => {
-  return c.text("AniFlowarr - Automated Anime Movie Management Server");
+  return c.text("Moderatarr - Automated Management Server");
 });
 
 // Health check endpoint
