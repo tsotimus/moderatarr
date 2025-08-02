@@ -18,9 +18,6 @@ RUN bun install --frozen-lockfile --production
 # Copy source code
 COPY . .
 
-# Run drizzle migrations to set up the database schema
-RUN bunx drizzle-kit migrate
-
 # Create data directory for SQLite database
 RUN mkdir -p /app/data
 
@@ -41,5 +38,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3000/health || exit 1
 
-# Start the application
-CMD ["bun", "start"] 
+# Start the application (run migrations first, then start)
+CMD ["sh", "-c", "bunx drizzle-kit migrate && bun start"] 
