@@ -18,6 +18,9 @@ RUN bun install --frozen-lockfile --production
 # Copy source code
 COPY . .
 
+# Run drizzle migrations to set up the database schema
+RUN bunx drizzle-kit migrate
+
 # Create data directory for SQLite database
 RUN mkdir -p /app/data
 
