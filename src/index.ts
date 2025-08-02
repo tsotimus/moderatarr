@@ -140,6 +140,7 @@ app.post("/webhook/overseerr", async (c) => {
                   requestId: requestId,
                 });
               } else {
+                console.log(updateRequest);
                 await awaitingApprovalAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 await handleAdminAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 return c.json({
