@@ -15,10 +15,15 @@ import { handleAdminAlert } from "./features/email/handleManualAlert";
 import { handleTVAnime, handleTVNonAnime } from "./features/media/handleTv";
 import { awaitingApprovalAlert } from "./features/email/awaitingApprovalAlert";
 import { env } from './env';
+import { logger } from 'hono/logger';
+import { customLogger, honoPrintFunc } from './features/logging/customLogger';
+
 
 onStartup();
 
 const app = new Hono();
+
+app.use(logger(honoPrintFunc));
 
 app.get("/", (c) => {
   return c.text("Moderatarr - Automated Management Server");
@@ -31,18 +36,20 @@ app.get("/health", (c) => {
 
 // Main webhook endpoint for Overseerr
 app.post("/webhook/overseerr", async (c) => {
-  console.log("Received webhook");
+  const requestId = crypto.randomUUID();
+  customLogger.info("Webhook endpoint hit", undefined, requestId);
+  
   try {
     const rawPayload = await c.req.json();
 
-    console.log(
-      `📥 Received notification type: ${rawPayload.notification_type || "UNKNOWN"}`
-    );
+    customLogger.webhookReceived(rawPayload.notification_type || "UNKNOWN", requestId);
 
     const parseResult = GeneralWebhookPayloadSchema.safeParse(rawPayload);
 
     if (!parseResult.success) {
-      console.error("Invalid payload structure:", parseResult.error.issues);
+      customLogger.error("Invalid payload structure", { 
+        errors: parseResult.error.issues 
+      }, requestId);
       return c.json(
         {
           status: "error",
@@ -74,83 +81,93 @@ app.post("/webhook/overseerr", async (c) => {
 
           const isAnime = await detectAnime(tmdbId, mediaType);
 
-          const requestId = payload.request!.request_id;
+          const overseerrRequestId = payload.request!.request_id;
+          
+          customLogger.mediaProcessing(mediaType, isAnime, tmdbId, requestId);
 
           const mediaProcessingResult = await match({ mediaType, isAnime })
             .with({ mediaType: "movie", isAnime: false }, async () => {
-              const request = await getRequest(requestId);
+              const request = await getRequest(overseerrRequestId);
               const updateRequest = await handleMovieNonAnime(request);
               if (updateRequest.success) {
+                customLogger.webhookProcessed("MEDIA_PENDING", "success", requestId);
                 return c.json({
                   status: "success",
                   message: "Movie non-anime request processed",
-                  requestId: requestId,
+                  requestId: overseerrRequestId,
                 });
               } else {
+                customLogger.webhookProcessed("MEDIA_PENDING", "error", requestId, updateRequest.reason);
                 await awaitingApprovalAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
                 await handleAdminAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
                 return c.json({
                   status: "error",
                   message: "Movie non-anime request failed",
-                  requestId: requestId,
+                  requestId: overseerrRequestId,
                 });
               }
             })
             .with({ mediaType: "movie", isAnime: true }, async () => {
-              const request = await getRequest(requestId);
+              const request = await getRequest(overseerrRequestId);
               const updateRequest = await handleMovieAnime(request);
               if (updateRequest.success) {
+                customLogger.webhookProcessed("MEDIA_PENDING", "success", requestId);
                 return c.json({
                   status: "success",
                   message: "Movie anime request processed",
-                  requestId: requestId,
+                  requestId: overseerrRequestId,
                 });
               } else {
+                customLogger.webhookProcessed("MEDIA_PENDING", "error", requestId, updateRequest.reason);
                 await awaitingApprovalAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
                 await handleAdminAlert(payload.request!, payload.subject, "Movie", updateRequest.reason);
                 return c.json({
                   status: "error",
                   message: "Movie anime request failed",
-                  requestId: requestId,
+                  requestId: overseerrRequestId,
                 });
               }
             })
             .with({ mediaType: "tv", isAnime: false }, async () => {
-              const request = await getRequest(requestId);
+              const request = await getRequest(overseerrRequestId);
               const updateRequest = await handleTVNonAnime(request, payload);
               if (updateRequest.success) {
+                customLogger.webhookProcessed("MEDIA_PENDING", "success", requestId);
                 return c.json({
                   status: "success",
                   message: "TV non-anime request processed",
-                  requestId: requestId,
+                  requestId: overseerrRequestId,
                 });
               } else {
+                customLogger.webhookProcessed("MEDIA_PENDING", "error", requestId, updateRequest.reason);
                 await awaitingApprovalAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 await handleAdminAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 return c.json({
                   status: "error",
                   message: "TV non-anime request failed", 
-                  requestId: requestId,
+                  requestId: overseerrRequestId,
                 });
               }
             })
             .with({ mediaType: "tv", isAnime: true }, async () => {
-              const request = await getRequest(requestId);
+              const request = await getRequest(overseerrRequestId);
               const updateRequest = await handleTVAnime(request, payload);
               if (updateRequest.success) {
+                customLogger.webhookProcessed("MEDIA_PENDING", "success", requestId);
                 return c.json({
                   status: "success",
                   message: "TV anime request processed",
-                  requestId: requestId,
+                  requestId: overseerrRequestId,
                 });
               } else {
-                console.log(updateRequest);
+                customLogger.error("TV anime request processing failed", { updateRequest }, requestId);
+                customLogger.webhookProcessed("MEDIA_PENDING", "error", requestId, updateRequest.reason);
                 await awaitingApprovalAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 await handleAdminAlert(payload.request!, payload.subject, "TV Show", updateRequest.reason);
                 return c.json({
                   status: "error",
                   message: "TV anime request failed",
-                  requestId: requestId,
+                  requestId: overseerrRequestId,
                 });
               }
             })
@@ -160,7 +177,7 @@ app.post("/webhook/overseerr", async (c) => {
         }
       )
       .with({ notification_type: P.union("MEDIA_AUTO_APPROVED", "MEDIA_APPROVED") }, async (payload) => {
-        console.log(payload);
+        customLogger.info("Media approval notification", { payload }, requestId);
         return c.json({
           status: "acknowledged",
           message: `Media ${payload.notification_type === "MEDIA_AUTO_APPROVED" ? "auto approved" : "approved"}`,
@@ -175,9 +192,10 @@ app.post("/webhook/overseerr", async (c) => {
         });
       })
       .otherwise(async (payload) => {
-        console.log(
-          `📥 Received notification type: ${payload.notification_type || "UNKNOWN"}`
-        );
+        customLogger.info("Unhandled notification type", {
+          notificationType: payload.notification_type || "UNKNOWN",
+          mediaType: payload.media?.media_type
+        }, requestId);
         return c.json({
           status: "acknowledged",
           message: "Webhook received but not processed (not a movie request)",
@@ -187,7 +205,10 @@ app.post("/webhook/overseerr", async (c) => {
       });
     return result;
   } catch (error) {
-    console.error("Error processing webhook:", error);
+    customLogger.error("Error processing webhook", { 
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined
+    }, requestId);
     return c.json(
       {
         status: "error",
