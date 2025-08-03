@@ -8,6 +8,7 @@ import { getProfiles, getRootFolders, getServerByServerIdAndType } from "../serv
 import { findAnimeProfile } from "../profiles/findAnimeProfile";
 import { findAnimeFolder } from "../profiles/findAnimeFolder";
 import { putRequest } from "../requests/putRequest";
+import { customLogger } from "../logging/customLogger";
 
 type ReturnType = {
     success: true,
@@ -28,7 +29,7 @@ const getHowManySeasons = (payload: GeneralWebhookPayload): {requestedSeasons: s
                     totalRequestedSeasons: requestedSeasonsArray.length
                 }
             } catch (error) {
-                console.error(`Error parsing requested seasons ${requestedSeasons.value}`, error)
+                customLogger.error(`Error parsing requested seasons ${requestedSeasons.value}`, { error, requestedSeasonsValue: requestedSeasons.value });
                 return null
             }
         }
@@ -50,7 +51,7 @@ const isLargeSeason = async (tmdbId: number, requestedSeasons: string[]) => {
 
 export const handleTVAnime = async (request: GetRequestResponse, payload: GeneralWebhookPayload): Promise<ReturnType> => {
     const requestedSeasons = getHowManySeasons(payload)
-    console.log(payload);
+    customLogger.debug("Processing TV anime request", { payload, requestId: request.id });
     if(!requestedSeasons) {
         return {
             success: false,
@@ -102,15 +103,16 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Genera
                         success: true
                     }
                   } catch (error) {
-                    console.error(`Error handling tv anime request ${request.id}`, error);
+                    customLogger.error(`Error handling tv anime request ${request.id}`, { error, requestId: request.id });
                     return {
                         success: false,
                         reason: "ERROR_UPDATING_REQUEST"
                     }
                   }
                 } else {
-                  console.log(
-                    `No profile found or folder found for server ${currentServerId} for a tv request`
+                  customLogger.warn(
+                    `No profile found or folder found for server ${currentServerId} for a tv request`,
+                    { serverId: currentServerId, requestId: request.id }
                   );
                   return {
                     success: false,
@@ -118,7 +120,7 @@ export const handleTVAnime = async (request: GetRequestResponse, payload: Genera
                   }
                 }
               } else {
-                console.log(`No server found for request ${request.id}`);
+                customLogger.warn(`No server found for request ${request.id}`, { requestId: request.id });
                 return {
                     success: false,
                     reason: "NO_SERVER_FOUND"

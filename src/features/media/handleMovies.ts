@@ -9,6 +9,7 @@ import {
   getRootFolders,
   getServerByServerIdAndType,
 } from "../serverData/getServer";
+import { customLogger } from "../logging/customLogger";
 
 type ReturnType = {
   success: true,
@@ -24,7 +25,7 @@ export const handleMovieNonAnime = async (request: GetRequestResponse): Promise<
       success: true
     };
   } catch (error) {
-    console.error(`Error handling movie non-anime request ${request.id}`, error);
+    customLogger.error(`Error handling movie non-anime request ${request.id}`, { error, requestId: request.id });
     return {
       success: false,
       reason: "ERROR_APPROVING_REQUEST"
@@ -54,19 +55,21 @@ export const handleMovieAnime = async (request: GetRequestResponse): Promise<Ret
           profileId: animeProfile.id,
           rootFolder: animeFolder.path,
         });
+        await updateRequestStatus(request.id, "approve");
         return {
           success: true
         };
       } catch (error) {
-        console.error(`Error handling movie anime request ${request.id}`, error);
+        customLogger.error(`Error handling movie anime request ${request.id}`, { error, requestId: request.id });
         return {
           success: false,
           reason: "ERROR_UPDATING_REQUEST"
         }
       }
     } else {
-      console.log(
-        `No profile found or folder found for server ${currentServerId} for a movie request`
+      customLogger.warn(
+        `No profile found or folder found for server ${currentServerId} for a movie request`,
+        { serverId: currentServerId, requestId: request.id }
       );
       return {
         success: false,
@@ -74,7 +77,7 @@ export const handleMovieAnime = async (request: GetRequestResponse): Promise<Ret
       }
     }
   } else {
-    console.log(`No server found for request ${request.id}`);
+    customLogger.warn(`No server found for request ${request.id}`, { requestId: request.id });
     return {
       success: false,
       reason: "NO_SERVER_FOUND"
