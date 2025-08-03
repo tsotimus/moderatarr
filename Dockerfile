@@ -10,6 +10,9 @@ COPY package.json bun.lock* ./
 # Install all dependencies (including dev dependencies for drizzle-kit)
 RUN bun install --frozen-lockfile
 
+# Install libsql client for drizzle-kit migration (doesn't require compilation)
+RUN bun add @libsql/client
+
 # Copy source code and config files
 COPY . .
 
@@ -41,6 +44,7 @@ COPY --from=builder /app/src ./src
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder /app/emails ./emails
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
 
 # Copy the database with migrations applied
 COPY --from=builder /app/data ./data
