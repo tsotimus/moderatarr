@@ -1,4 +1,4 @@
-import { overseerrApi } from '@/lib/overseerr';
+import { overseerrApi } from '@/lib/seerr';
 import { GetRequestResponse } from './types';
 
 export const getRequest = async (requestId: number): Promise<GetRequestResponse> => {

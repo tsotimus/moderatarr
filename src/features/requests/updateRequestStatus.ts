@@ -1,4 +1,4 @@
-import { overseerrApi } from "@/lib/overseerr";
+import { overseerrApi } from "@/lib/seerr";
 import { UpdateRequestStatusResponse } from './types';
 
 export const updateRequestStatus = async (requestId: number, status: "approve" | "decline"): Promise<UpdateRequestStatusResponse> => {

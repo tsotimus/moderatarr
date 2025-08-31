@@ -1,4 +1,4 @@
-import { overseerrApi } from "@/lib/overseerr"
+import { overseerrApi } from "@/lib/seerr"
 import { OverseerrProfile, OverseerrRootFolder, OverseerrTag    } from "./types"
 
 export interface SonarrInstance {

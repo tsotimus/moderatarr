@@ -1,4 +1,4 @@
-import { GeneralWebhookPayloadSchema } from './lib/overseerr/schema';
+import { GeneralWebhookPayloadSchema } from './lib/seerr/schema';
 import { Hono } from "hono";
 import { match, P } from "ts-pattern";
 import { detectAnime } from "@/features/anime/detectAnime";
@@ -34,8 +34,8 @@ app.get("/health", (c) => {
   return c.json({ status: "healthy", timestamp: new Date().toISOString() });
 });
 
-// Main webhook endpoint for Overseerr
-app.post("/webhook/overseerr", async (c) => {
+// Main webhook endpoint for Overseerr/Jellyseerr
+app.post("/webhook/seerr", async (c) => {
   const requestId = crypto.randomUUID();
   customLogger.info("Webhook endpoint hit", undefined, requestId);
   

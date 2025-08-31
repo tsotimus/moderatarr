@@ -3,7 +3,7 @@
 import { NewRequestEmail } from '@/emails/new-request';
 import { resend } from "@/lib/resend";
 import { env } from "@/env";
-import { GeneralWebhookPayload } from "@/lib/overseerr/schema";
+import { GeneralWebhookPayload } from "@/lib/seerr/schema";
 
 export const handleAdminAlert = async (requester: NonNullable<GeneralWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
     try {

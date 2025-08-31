@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { resend } from "@/lib/resend";
 import { AwaitingApprovalEmail } from "@/emails/awaiting-approval";
-import { GeneralWebhookPayload } from "@/lib/overseerr/schema";
+import { GeneralWebhookPayload } from "@/lib/seerr/schema";
 
 export const awaitingApprovalAlert = async (requester: NonNullable<GeneralWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
   if(!requester.requestedBy_email) {

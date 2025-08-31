@@ -1,4 +1,4 @@
-import { GeneralWebhookPayload } from "@/lib/overseerr/schema";
+import { GeneralWebhookPayload } from "@/lib/seerr/schema";
 import { GetRequestResponse } from "../requests/types";
 import { env } from "@/env";
 import { getTvDetails } from "../details/getDetails";

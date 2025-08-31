@@ -1,4 +1,4 @@
-import { overseerrApi } from '@/lib/overseerr';
+import { overseerrApi } from '@/lib/seerr';
 import { PutRequestBody, PutRequestResponse } from './types';
 
 export const putRequest = async (requestId: number, requestBody: PutRequestBody): Promise<PutRequestResponse> => {
