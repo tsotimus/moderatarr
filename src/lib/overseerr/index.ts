@@ -3,9 +3,9 @@ import { env } from '@/env';
 
 // Generic axios instance for Overseerr API with API Key Authentication
 export const overseerrApi = axios.create({
-  baseURL: env.OVERSEERR_BASE_URL + "/api/v1",
+  baseURL: env.SEERR_BASE_URL + "/api/v1",
   headers: {
-    'X-Api-Key': env.OVERSEERR_API_TOKEN,
+    'X-Api-Key': env.SEERR_API_TOKEN,
     'Content-Type': 'application/json',
   },
   timeout: 10000, // 10 second timeout

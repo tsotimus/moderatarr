@@ -1,6 +1,6 @@
 # Moderatarr
 
-Moderatarr is a lightweight TypeScript webhook server that listens to incoming requests from Overseerr and provides intelligent anime detection and automation.
+Moderatarr is a lightweight TypeScript webhook server that listens to incoming requests from Overseerr or Jellyseerr and provides intelligent anime detection and automation.
 
 ## Features
 
@@ -28,11 +28,11 @@ docker run -d \
   -e RESEND_API_KEY=your_resend_api_key \
   -e RESEND_AUDIENCE_ID=your_resend_audience_id \
   -e TMDB_API_TOKEN=your_tmdb_api_token \
-  -e OVERSEERR_API_TOKEN=your_overseerr_api_token \
-  -e OVERSEERR_BASE_URL=http://your-overseerr:5055 \
-  -e OVERSEERR_EMAIL=your_overseerr@email.com \
+  -e SEERR_API_TOKEN=your_seerr_api_token \
+  -e SEERR_BASE_URL=http://your-seerr:5055 \
+  -e SEERR_EMAIL=your_seerr@email.com \
   -e ADMIN_EMAIL=your_admin@email.com \
-  -e OVERSEERR_EMAIL_URL=http://your-overseerr:5055 \
+  -e SEERR_EMAIL_URL=http://your-seerr:5055 \
   --restart unless-stopped \
   tsotimus1/moderatarr:latest
 ```
@@ -47,9 +47,16 @@ docker ps | grep moderatarr
 curl http://localhost:3000/health
 ```
 
-### Step 4: Setup Webhook in Overseerr
+### Step 4: Setup Webhook in Overseerr/Jellyseerr
 
+#### For Overseerr:
 1. In Overseerr, go to **Settings** → **Notifications** → **Webhook**
+2. Set the webhook URL to: `http://your-server-ip:3000/webhook/overseerr`
+3. Enable the webhook for **"Media Pending"** notifications
+4. Save the configuration
+
+#### For Jellyseerr:
+1. In Jellyseerr, go to **Settings** → **Notifications** → **Webhook**
 2. Set the webhook URL to: `http://your-server-ip:3000/webhook/overseerr`
 3. Enable the webhook for **"Media Pending"** notifications
 4. Save the configuration
@@ -65,11 +72,11 @@ That's it! Your Moderatarr instance is now running and ready to process anime re
 | `RESEND_API_KEY` | Your Resend API key | `re_123456789` |
 | `RESEND_AUDIENCE_ID` | Your Resend audience ID | `aud_123456789` |
 | `TMDB_API_TOKEN` | The Movie Database API token | `eyJhbGciOiJIUzI1NiJ9...` |
-| `OVERSEERR_API_TOKEN` | Your Overseerr API token | `MTcxNjQ4NzE4NXxZV...` |
-| `OVERSEERR_BASE_URL` | Your Overseerr base URL | `http://overseerr:5055` |
-| `OVERSEERR_EMAIL` | Your domain email that your sending emails from. Should be from a valid resend domain | `overseerr@yourdomain.com` |
+| `SEERR_API_TOKEN` | Your Overseerr/Jellyseerr API token | `MTcxNjQ4NzE4NXxZV...` |
+| `SEERR_BASE_URL` | Your Overseerr/Jellyseerr base URL | `http://overseerr:5055` |
+| `SEERR_EMAIL` | Your domain email that your sending emails from. Should be from a valid resend domain | `overseerr@yourdomain.com` |
 | `ADMIN_EMAIL` | Your admin email for email alerts. Can be any email you want to receive alerts | `admin@yourdomain.com` |
-| `OVERSEERR_EMAIL_URL` | Your Overseerr URL, used in the emails for quick access to the requests | `http://overseerr:5055` |
+| `SEERR_EMAIL_URL` | Your Overseerr/Jellyseerr URL, used in the emails for quick access to the requests | `http://overseerr:5055` |
 
 ### Optional Environment Variables
 

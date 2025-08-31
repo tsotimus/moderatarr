@@ -11,7 +11,7 @@ export const awaitingApprovalAlert = async (requester: NonNullable<GeneralWebhoo
   
   try {
     await resend.emails.send({
-        from: `"Caucasus Cloud" <${env.OVERSEERR_EMAIL}>`,
+        from: `"Caucasus Cloud" <${env.SEERR_EMAIL}>`,
         to: requester.requestedBy_email,
         subject: `Awaiting approval - Your request has been made`,
         react: AwaitingApprovalEmail({
@@ -19,7 +19,7 @@ export const awaitingApprovalAlert = async (requester: NonNullable<GeneralWebhoo
           mediaTitle: title,
           mediaType: type,
           reason: reason,
-          overseerrUrl: env.OVERSEERR_EMAIL_URL,
+          overseerrUrl: env.SEERR_EMAIL_URL,
           showTooManySeasonsText: reason === "TOO_MANY_SEASONS"
         }),
       });

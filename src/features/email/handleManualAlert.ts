@@ -8,7 +8,7 @@ import { GeneralWebhookPayload } from "@/lib/overseerr/schema";
 export const handleAdminAlert = async (requester: NonNullable<GeneralWebhookPayload["request"]>, title: string, type: "Movie" | "TV Show", reason: string) => {
     try {
         await resend.emails.send({
-            from: `"Caucasus Cloud" <${env.OVERSEERR_EMAIL}>`,
+            from: `"Caucasus Cloud" <${env.SEERR_EMAIL}>`,
             to: env.ADMIN_EMAIL,
             subject: `Action required - A new request has been made`,
             react: NewRequestEmail({
@@ -16,7 +16,7 @@ export const handleAdminAlert = async (requester: NonNullable<GeneralWebhookPayl
               requesterEmail: requester.requestedBy_email ?? "",
               mediaTitle: title,
               mediaType: type,
-              overseerrUrl: env.OVERSEERR_EMAIL_URL,
+              overseerrUrl: env.SEERR_EMAIL_URL,
               reason: reason,
             }),
             headers: {
